@@ -38,10 +38,14 @@ export default function RevealSection({
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
-                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
                         if (currentActiveId !== idRef.current) {
                             currentActiveId = idRef.current;
-                            window.dispatchEvent(new CustomEvent<string>(ACTIVE_SECTION_EVENT, { detail: idRef.current }));
+                            window.dispatchEvent(
+                                new CustomEvent<string>(ACTIVE_SECTION_EVENT, {
+                                    detail: idRef.current,
+                                })
+                            );
                         }
                     }
                 });
