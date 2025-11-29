@@ -34,25 +34,32 @@ main {
 .full-bleed {
   width: 100vw;
   margin-left: calc(50% - 50vw);
-}
-
 .hero-cta {
   display: inline-block;
   padding: 0.75rem 1.25rem;
   border-radius: 999px;
-  border: 1px solid #111;
+  border: 1px solid rgb(219, 52, 242);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #111;
+  color: rgb(219, 52, 242);
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .hero-cta:hover,
 .hero-cta:focus-visible {
-  background: #111;
+  background: rgb(219, 52, 242);
   color: #fff;
   transform: translateY(-1px);
+}
+
+a {
+  color: rgb(219, 52, 242);
+}
+
+a:hover,
+a:focus-visible {
+  text-decoration: underline;
 }
 
 /* Optional inner container to cap extremely wide screens */
