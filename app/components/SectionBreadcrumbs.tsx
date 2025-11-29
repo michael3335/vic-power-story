@@ -51,72 +51,6 @@ export default function SectionBreadcrumbs({ sections }: Props) {
 
     const canonicalActiveId = resolveCanonicalActiveId(activeId);
 
-    const renderSection = (section: SectionInfo) => {
-        const isHovered = section.id === hoveredId;
-        const isActive = section.id === canonicalActiveId;
-        const baseOpacity = 0.5;
-        const activeOpacity = 0.9;
-        const targetOpacity = isActive ? activeOpacity : baseOpacity;
-        const hoveredOpacity = isHovered ? Math.min(1, targetOpacity + 0.1) : targetOpacity;
-
-        return (
-            <React.Fragment key={section.id}>
-                <button
-                    type="button"
-                    onClick={() => handleClick(section.id)}
-                    onMouseEnter={() => setHoveredId(section.id)}
-                    onMouseLeave={() =>
-                        setHoveredId((prev) => (prev === section.id ? null : prev))
-                    }
-                    aria-label={section.label}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        background: "transparent",
-                        border: "none",
-                        padding: "4px 0",
-                        cursor: "pointer",
-                        color: "#111",
-                        opacity: hoveredOpacity,
-                        transition: "opacity 0.2s ease",
-                    }}
-                >
-                    <span
-                        style={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: 999,
-                            backgroundColor: "#111",
-                            filter: isHovered ? "brightness(1.1)" : "none",
-                            transition: "opacity 0.2s ease, filter 0.2s ease",
-                            opacity: hoveredOpacity,
-                        }}
-                    />
-                    <span
-                        style={{
-                            fontSize: 12,
-                            fontWeight: isActive ? 600 : 500,
-                            letterSpacing: "0.08em",
-                            textTransform: "uppercase",
-                            opacity: showLabels ? (isActive ? 0.85 : 0.5) : 0,
-                            whiteSpace: "nowrap",
-                            width: 140,
-                            textAlign: "left",
-                            transition: "opacity 0.2s ease",
-                            visibility: showLabels ? "visible" : "hidden",
-                        }}
-                    >
-                        {section.label}
-                    </span>
-                </button>
-                {section.children && hasActiveDescendant(section, activeId)
-                    ? section.children.map((child) => renderSection(child, depth + 1))
-                    : null}
-            </React.Fragment>
-        );
-    };
-
     return (
         <div
             aria-label="Page breadcrumbs"
@@ -134,7 +68,67 @@ export default function SectionBreadcrumbs({ sections }: Props) {
                 minWidth: 160,
             }}
         >
-            {sections.map((section) => renderSection(section))}
+            {sections.map((section) => {
+                const isHovered = section.id === hoveredId;
+                const isActive = section.id === canonicalActiveId;
+                const baseOpacity = 0.5;
+                const activeOpacity = 0.9;
+                const targetOpacity = isActive ? activeOpacity : baseOpacity;
+                const hoveredOpacity = isHovered ? Math.min(1, targetOpacity + 0.1) : targetOpacity;
+
+                return (
+                    <button
+                        key={section.id}
+                        type="button"
+                        onClick={() => handleClick(section.id)}
+                        onMouseEnter={() => setHoveredId(section.id)}
+                        onMouseLeave={() =>
+                            setHoveredId((prev) => (prev === section.id ? null : prev))
+                        }
+                        aria-label={section.label}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            background: "transparent",
+                            border: "none",
+                            padding: "4px 0",
+                            cursor: "pointer",
+                            color: "#111",
+                            opacity: hoveredOpacity,
+                            transition: "opacity 0.2s ease",
+                        }}
+                    >
+                        <span
+                            style={{
+                                width: 10,
+                                height: 10,
+                                borderRadius: 999,
+                                backgroundColor: "#111",
+                                filter: isHovered ? "brightness(1.1)" : "none",
+                                transition: "opacity 0.2s ease, filter 0.2s ease",
+                                opacity: hoveredOpacity,
+                            }}
+                        />
+                        <span
+                            style={{
+                                fontSize: 12,
+                                fontWeight: isActive ? 600 : 500,
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                                opacity: showLabels ? (isActive ? 0.85 : 0.5) : 0,
+                                whiteSpace: "nowrap",
+                                width: 140,
+                                textAlign: "left",
+                                transition: "opacity 0.2s ease",
+                                visibility: showLabels ? "visible" : "hidden",
+                            }}
+                        >
+                            {section.label}
+                        </span>
+                    </button>
+                );
+            })}
         </div>
     );
 }
