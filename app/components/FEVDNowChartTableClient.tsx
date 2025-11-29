@@ -11,6 +11,7 @@ import {
     ResponsiveContainer,
     LabelList,
 } from "recharts";
+import type { LabelContentType, Props as LabelProps } from "recharts/types/component/Label";
 import type { FEVDFullRow } from "@/types/results";
 
 type Props = {
@@ -137,32 +138,44 @@ export default function FEVDNowChartTableClient({
         };
     });
 
-    type LabelRenderProps = {
-        x?: number;
-        y?: number;
-        width?: number;
-        height?: number;
-        value?: number;
+    const toNumber = (value?: number | string) => {
+        if (typeof value === "number") return value;
+        if (typeof value === "string") {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : 0;
+        }
+        return 0;
     };
 
-    const labelInsideBar = ({
-        x = 0,
-        y = 0,
-        width = 0,
-        height = 0,
+    const labelInsideBar: LabelContentType = ({
+        x,
+        y,
+        width,
+        height,
         value,
-    }: LabelRenderProps) => {
-        if (value === undefined || value === null) return null;
-        const pct = (value as number) * 100;
+    }: LabelProps) => {
+        const rawValue =
+            typeof value === "number"
+                ? value
+                : typeof value === "string"
+                    ? Number(value)
+                    : NaN;
+        if (!Number.isFinite(rawValue)) return "";
+        const pct = rawValue * 100;
+
+        const widthNum = toNumber(width);
+        const heightNum = toNumber(height);
+        const xNum = toNumber(x);
+        const yNum = toNumber(y);
         // Avoid cluttering tiny slivers
-        if (pct < 8 || width < 32) return null;
+        if (pct < 8 || widthNum < 32) return "";
 
         const text = pct >= 20 ? `${pct.toFixed(0)}%` : `${pct.toFixed(1)}%`;
 
         return (
             <text
-                x={x + width / 2}
-                y={y + height / 2 + 4}
+                x={xNum + widthNum / 2}
+                y={yNum + heightNum / 2 + 4}
                 fill="#f9fafb"
                 fontSize={11}
                 fontWeight={600}
