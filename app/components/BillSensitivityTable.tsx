@@ -92,6 +92,12 @@ export default function BillSensitivityTable({ demandFirst, renFirst }: Props) {
                 modelled shares by the assumed shock size. They show relative exposure,
                 not exact bill changes or elasticities.
             </div>
+            <p className="mt-2 text-[11px] text-neutral-600">
+                Each row reports the approximate change in average monthly wholesale
+                price that follows from the scenario’s shock (share × shock magnitude × 100),
+                so the sign shows the direction of the move. The calculations ignore
+                higher-order dynamics and feedbacks, serving only as a simple illustration.
+            </p>
         </div>
     );
 }

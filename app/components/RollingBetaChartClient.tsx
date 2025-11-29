@@ -149,6 +149,17 @@ export default function RollingBetaChartClient({ data }: Props) {
                     2023–25 (weather/renewables-led):{" "}
                     {phase3Avg !== null ? `${(phase3Avg * 100).toFixed(1)}%` : "—"}
                 </span>
+                <span className="mt-0.5 block text-[10px] text-neutral-500">
+                    These pass-through numbers report the percent change in wholesale
+                    power price per 1% move in gas price (beta × 100), so the line can
+                    be read as an elasticity-like response.
+                </span>
+                <span className="mt-0.5 block text-[10px] text-neutral-500">
+                    When the coefficient turns negative—as it often does after 2023—it
+                    means renewables, weather or network conditions are pushing prices
+                    down even as gas stays high, which is why the red dots flag
+                    opposite movements.
+                </span>
                 <span className="mt-0.5 block">
                     Shaded bands match the three phases in the narrative so you can see
                     the break points directly on the chart.

@@ -2,19 +2,24 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
+export const ACTIVE_SECTION_EVENT = "reveal-section:activate";
+let currentActiveId: string | null = null;
+
 type Props = {
     children: React.ReactNode;
     className?: string;
+    sectionId?: string;
 };
-
-const ACTIVE_EVENT = "reveal-section:activate";
-let currentActiveId: string | null = null;
 
 type RevealState = "idle" | "active" | "exiting";
 
-export default function RevealSection({ children, className = "" }: Props) {
+export default function RevealSection({
+    children,
+    className = "",
+    sectionId,
+}: Props) {
     const ref = useRef<HTMLDivElement | null>(null);
-    const idRef = useRef<string>(React.useId());
+    const idRef = useRef<string>(sectionId ?? React.useId());
     const [state, setState] = useState<RevealState>("idle");
 
     useEffect(() => {
@@ -36,7 +41,7 @@ export default function RevealSection({ children, className = "" }: Props) {
                     if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
                         if (currentActiveId !== idRef.current) {
                             currentActiveId = idRef.current;
-                            window.dispatchEvent(new CustomEvent<string>(ACTIVE_EVENT, { detail: idRef.current }));
+                            window.dispatchEvent(new CustomEvent<string>(ACTIVE_SECTION_EVENT, { detail: idRef.current }));
                         }
                     }
                 });
@@ -47,16 +52,16 @@ export default function RevealSection({ children, className = "" }: Props) {
             }
         );
 
-        window.addEventListener(ACTIVE_EVENT, handleActivate as EventListener);
+        window.addEventListener(ACTIVE_SECTION_EVENT, handleActivate as EventListener);
         observer.observe(el);
 
         if (currentActiveId === null) {
             currentActiveId = idRef.current;
-            window.dispatchEvent(new CustomEvent<string>(ACTIVE_EVENT, { detail: idRef.current }));
+            window.dispatchEvent(new CustomEvent<string>(ACTIVE_SECTION_EVENT, { detail: idRef.current }));
         }
 
         return () => {
-            window.removeEventListener(ACTIVE_EVENT, handleActivate as EventListener);
+            window.removeEventListener(ACTIVE_SECTION_EVENT, handleActivate as EventListener);
             observer.disconnect();
         };
     }, []);

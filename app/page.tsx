@@ -5,7 +5,23 @@ import RollingBetaChartClient from "./components/RollingBetaChartClient";
 import FEVDNowChartTableClient from "./components/FEVDNowChartTableClient";
 import FEVDTrendStrip from "./components/FEVDTrendStrip";
 import BillSensitivityTable from "./components/BillSensitivityTable";
+import SectionBreadcrumbs from "./components/SectionBreadcrumbs";
 import type { RollingBetaPoint, FEVDFullRow, FEVDTrendPoint } from "@/types/results";
+
+const SECTION_BREADCRUMBS = [
+  { id: "hero", label: "Introduction" },
+  { id: "tldr", label: "TL;DR" },
+  { id: "exec", label: "Executive summary" },
+  { id: "old-story", label: "The old story" },
+  { id: "background", label: "Victoria’s market" },
+  { id: "methods", label: "What we did" },
+  { id: "phases", label: "Three phases" },
+  { id: "pass-through", label: "Gas pass-through" },
+  { id: "fevd-now", label: "FEVD now" },
+  { id: "fevd-trend", label: "Drivers over time" },
+  { id: "bills", label: "Bills" },
+  { id: "policy", label: "Policy" },
+];
 
 async function getWebData() {
   const base = path.join(process.cwd(), "public", "data");
@@ -42,8 +58,9 @@ export default async function Home() {
 
   return (
     <main>
+      <SectionBreadcrumbs sections={SECTION_BREADCRUMBS} />
       {/* HERO */}
-      <RevealSection>
+      <RevealSection sectionId="hero">
         <p
           style={{
             textTransform: "uppercase",
@@ -60,7 +77,7 @@ export default async function Home() {
             color: "#666",
           }}
         >
-          {publishedDate}
+          {publishedDate} | Michael Harrison
         </p>
         <h1
           style={{
@@ -114,8 +131,24 @@ export default async function Home() {
         </div>
       </RevealSection>
 
+      <RevealSection sectionId="tldr">
+        <div
+          className="mt-4 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700 shadow-sm"
+          style={{ maxWidth: "36rem" }}
+        >
+          <strong className="text-xs uppercase tracking-wider text-neutral-500">
+            TL;DR:
+          </strong>
+          <ul className="mt-2 list-disc pl-4 space-y-1">
+            <li>Gas pass-through is now near zero or negative month-to-month.</li>
+            <li>Renewables, imports and demand explain ~80% of FEVD at 24 months.</li>
+            <li>“Other / own price” mostly covers direct electricity shocks plus own VAR noise.</li>
+          </ul>
+        </div>
+      </RevealSection>
+
       {/* EXEC SUMMARY */}
-      <RevealSection>
+      <RevealSection sectionId="exec">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           Executive summary: what changed?
         </h2>
@@ -165,7 +198,7 @@ export default async function Home() {
       </RevealSection>
 
       {/* OLD STORY */}
-      <RevealSection>
+      <RevealSection sectionId="old-story">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           1. The old story: gas in the driver’s seat
         </h2>
@@ -248,7 +281,7 @@ export default async function Home() {
       </RevealSection>
 
       {/* BACKGROUND */}
-      <RevealSection>
+      <RevealSection sectionId="background">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           2. Victoria’s market in brief
         </h2>
@@ -290,7 +323,7 @@ export default async function Home() {
       </RevealSection>
 
       {/* METHODS */}
-      <RevealSection>
+      <RevealSection sectionId="methods">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           3. What we did: follow the data, month by month
         </h2>
@@ -330,7 +363,7 @@ export default async function Home() {
       </RevealSection>
 
       {/* PHASES */}
-      <RevealSection>
+      <RevealSection sectionId="phases">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           4. Three phases of Victoria’s power market
         </h2>
@@ -377,7 +410,10 @@ export default async function Home() {
           <strong>2% of price variation</strong>, while renewables explain{" "}
           <strong>about 14–15%</strong> and imports a few percent more. The
           bulk – roughly four-fifths – is due to own-price shocks and other
-          factors.
+          factors. In FEVD language, “other / own price” mostly captures shocks
+          that hit electricity prices directly – policy shifts, bidding
+          behaviour, outages or other market responses we haven’t modelled
+          explicitly – plus the VAR’s mechanical own-shock term.
         </p>
         <p>
           In practical terms, gas hasn’t disappeared, but it has moved from the{" "}
@@ -396,7 +432,7 @@ export default async function Home() {
       </RevealSection>
 
       {/* VISUAL: ROLLING BETA */}
-      <RevealSection>
+      <RevealSection sectionId="pass-through">
         <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
           4a. How the gas → power link weakened over time
         </h2>
@@ -417,7 +453,7 @@ export default async function Home() {
       </RevealSection>
 
       {/* VISUAL: FEVD NOW */}
-      <RevealSection>
+      <RevealSection sectionId="fevd-now">
         <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
           4b. What actually drives prices now?
         </h2>
@@ -442,12 +478,14 @@ export default async function Home() {
       </RevealSection>
 
       {/* VISUAL: FEVD TREND OVER TIME */}
-      <RevealSection>
+      <RevealSection sectionId="fevd-trend">
         <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
           4c. How drivers’ importance shifted
         </h2>
         <p>
-          Monthly FEVD shares for each driver show{" "}
+          These panels show how each driver’s share of overall variance moves
+          over time, not just at the two-year horizon above. Monthly FEVD
+          shares for each driver show{" "}
           <span style={{ whiteSpace: "nowrap" }}>other / own price</span>{" "}
           dynamics dominating throughout, renewables rising over the decade, and
           gas small in the latest period after a mid‑sample spike. The shaded
@@ -463,7 +501,7 @@ export default async function Home() {
       </RevealSection>
 
       {/* BILLS */}
-      <RevealSection>
+      <RevealSection sectionId="bills">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           5. What this means for bills
         </h2>
@@ -490,11 +528,14 @@ export default async function Home() {
             imports and congestion.
           </li>
         </ul>
+        <p>
+          This doesn’t mean gas is irrelevant – during tight supply episodes gas-fired plant still often sets the marginal price – but on a month-by-month basis, weather, renewables and network conditions now explain much more of the ups and downs.
+        </p>
         <BillSensitivityTable demandFirst={fevdDemandFirst} renFirst={fevdRenFirst} />
       </RevealSection>
 
       {/* POLICY */}
-      <RevealSection>
+      <RevealSection sectionId="policy">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           6. Policy, risk and the road ahead
         </h2>
