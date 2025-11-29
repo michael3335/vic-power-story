@@ -10,16 +10,20 @@ import ScrollCue from "./components/ScrollCue";
 import type { RollingBetaPoint, FEVDFullRow, FEVDTrendPoint } from "@/types/results";
 
 const SECTION_BREADCRUMBS = [
-  { id: "hero", label: "Introduction" },
-  { id: "tldr", label: "TL;DR" },
+  {
+    id: "hero",
+    label: "Introduction",
+    aliases: ["about", "tldr"],
+  },
   { id: "exec", label: "Executive summary" },
   { id: "old-story", label: "The old story" },
   { id: "background", label: "Victoria’s market" },
   { id: "methods", label: "What we did" },
-  { id: "phases", label: "Three phases" },
-  { id: "pass-through", label: "Gas pass-through" },
-  { id: "fevd-now", label: "FEVD now" },
-  { id: "fevd-trend", label: "Drivers over time" },
+  {
+    id: "phases",
+    label: "Three phases",
+    aliases: ["pass-through", "fevd-now", "fevd-trend"],
+  },
   { id: "bills", label: "Bills" },
   { id: "policy", label: "Policy" },
 ];
@@ -125,7 +129,51 @@ export default async function Home() {
         <ScrollCue />
       </RevealSection>
 
+      <RevealSection sectionId="about">
+        <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>
+          About this project
+        </h2>
+        <div
+          className="mt-1 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700 shadow-sm"
+          style={{ maxWidth: "36rem" }}
+        >
+          <dl className="space-y-1">
+            <div className="flex gap-2">
+              <dt className="w-24 text-neutral-500">Author</dt>
+              <dd className="flex-1">
+                <a
+                  href="mailto:contact@michaelharrison.au"
+                  className="underline underline-offset-2"
+                >
+                  Michael Harrison
+                </a>
+              </dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="w-24 text-neutral-500">Period</dt>
+              <dd className="flex-1">Monthly data, 2015–2025</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="w-24 text-neutral-500">Data</dt>
+              <dd className="flex-1">
+                Victorian wholesale electricity prices, Wallumbilla gas prices,
+                renewables share, interconnector flows, demand and key global
+                fuel benchmarks.
+              </dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="w-24 text-neutral-500">Methods</dt>
+              <dd className="flex-1">
+                Rolling pass-through models, structural VAR with FEVD, and
+                standard break and cointegration tests.
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </RevealSection>
+
       <RevealSection sectionId="tldr">
+        <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>TL;DR</h2>
         <div
           className="mt-4 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700 shadow-sm"
           style={{ maxWidth: "36rem" }}
