@@ -57,7 +57,7 @@ export default async function Home() {
   const publishedDate = "30 Nov 2025";
 
   return (
-    <main>
+    <main style={{ scrollSnapType: "y mandatory" }}>
       <SectionBreadcrumbs sections={SECTION_BREADCRUMBS} />
       {/* HERO */}
       <RevealSection sectionId="hero">
@@ -114,19 +114,7 @@ export default async function Home() {
         </p>
 
         <div style={{ marginTop: "1.75rem" }}>
-          <a
-            href="https://example.com/working-paper.pdf"
-            style={{
-              display: "inline-block",
-              padding: "0.75rem 1.25rem",
-              borderRadius: "999px",
-              border: "1px solid #111",
-              textDecoration: "none",
-              fontSize: "0.9rem",
-              fontWeight: 500,
-              color: "#111",
-            }}
-          >
+          <a href="https://example.com/working-paper.pdf" className="hero-cta">
             Download report (PDF)
           </a>
         </div>
