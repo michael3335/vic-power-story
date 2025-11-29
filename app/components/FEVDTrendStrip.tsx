@@ -13,6 +13,7 @@ import {
     ReferenceDot,
     ReferenceArea,
 } from "recharts";
+import type { CategoricalChartFunc } from "recharts/types/chart/types";
 import type { FEVDTrendPoint } from "@/types/results";
 
 type Props = {
@@ -183,6 +184,14 @@ export default function FEVDTrendStrip({ data }: Props) {
         return `${monthLabel} ${year}`;
     };
 
+    const handleMouseMove: CategoricalChartFunc = (nextState) => {
+        const label = nextState?.activeLabel;
+        if (label === undefined || label === null) {
+            return;
+        }
+        setActivePeriod(String(label));
+    };
+
     return (
         <div className="rounded-2xl border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 p-3 lg:p-4 shadow-[0_10px_40px_-32px_rgba(0,0,0,0.45)]">
             {/* Centered title + subtitle */}
@@ -256,12 +265,7 @@ export default function FEVDTrendStrip({ data }: Props) {
                                     <AreaChart
                                         data={data}
                                         margin={{ top: 4, right: 4, left: 0, bottom: 14 }}
-                                        onMouseMove={(state: { activeLabel?: string } | undefined) => {
-                                            const label = state?.activeLabel;
-                                            if (typeof label === "string") {
-                                                setActivePeriod(label);
-                                            }
-                                        }}
+                                        onMouseMove={handleMouseMove}
                                         onMouseLeave={() => setActivePeriod(null)}
                                     >
                                         {PHASES.map((phase) => (
