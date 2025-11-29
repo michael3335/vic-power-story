@@ -1,0 +1,466 @@
+[
+  {
+    "period": "2019-12",
+    "Gas": 0.0413,
+    "Demand": 0.0887,
+    "Renewables": 0.0086,
+    "Imports": 0.0124,
+    "Own": 0.8491
+  },
+  {
+    "period": "2020-01",
+    "Gas": 0.0505,
+    "Demand": 0.0633,
+    "Renewables": 0.01,
+    "Imports": 0.0103,
+    "Own": 0.866
+  },
+  {
+    "period": "2020-02",
+    "Gas": 0.0426,
+    "Demand": 0.1363,
+    "Renewables": 0.0193,
+    "Imports": 0.0072,
+    "Own": 0.7946
+  },
+  {
+    "period": "2020-03",
+    "Gas": 0.0531,
+    "Demand": 0.1038,
+    "Renewables": 0.0232,
+    "Imports": 0.0122,
+    "Own": 0.8075
+  },
+  {
+    "period": "2020-04",
+    "Gas": 0.0516,
+    "Demand": 0.0944,
+    "Renewables": 0.0292,
+    "Imports": 0.0112,
+    "Own": 0.8136
+  },
+  {
+    "period": "2020-05",
+    "Gas": 0.0285,
+    "Demand": 0.0835,
+    "Renewables": 0.045,
+    "Imports": 0.0213,
+    "Own": 0.8217
+  },
+  {
+    "period": "2020-06",
+    "Gas": 0.0046,
+    "Demand": 0.0643,
+    "Renewables": 0.0825,
+    "Imports": 0.0431,
+    "Own": 0.8055
+  },
+  {
+    "period": "2020-07",
+    "Gas": 0.0418,
+    "Demand": 0.1143,
+    "Renewables": 0.1395,
+    "Imports": 0.0392,
+    "Own": 0.6652
+  },
+  {
+    "period": "2020-08",
+    "Gas": 0.013,
+    "Demand": 0.0928,
+    "Renewables": 0.1574,
+    "Imports": 0.0412,
+    "Own": 0.6956
+  },
+  {
+    "period": "2020-09",
+    "Gas": 0.0096,
+    "Demand": 0.0824,
+    "Renewables": 0.1959,
+    "Imports": 0.0419,
+    "Own": 0.6702
+  },
+  {
+    "period": "2020-10",
+    "Gas": 0.0084,
+    "Demand": 0.0707,
+    "Renewables": 0.2397,
+    "Imports": 0.0336,
+    "Own": 0.6475
+  },
+  {
+    "period": "2020-11",
+    "Gas": 0.0084,
+    "Demand": 0.0699,
+    "Renewables": 0.2346,
+    "Imports": 0.0369,
+    "Own": 0.6501
+  },
+  {
+    "period": "2020-12",
+    "Gas": 0.0092,
+    "Demand": 0.0816,
+    "Renewables": 0.225,
+    "Imports": 0.0305,
+    "Own": 0.6538
+  },
+  {
+    "period": "2021-01",
+    "Gas": 0.0517,
+    "Demand": 0.0841,
+    "Renewables": 0.2432,
+    "Imports": 0.0518,
+    "Own": 0.5691
+  },
+  {
+    "period": "2021-02",
+    "Gas": 0.0541,
+    "Demand": 0.0757,
+    "Renewables": 0.2505,
+    "Imports": 0.0541,
+    "Own": 0.5656
+  },
+  {
+    "period": "2021-03",
+    "Gas": 0.062,
+    "Demand": 0.0762,
+    "Renewables": 0.2336,
+    "Imports": 0.0624,
+    "Own": 0.5659
+  },
+  {
+    "period": "2021-04",
+    "Gas": 0.1161,
+    "Demand": 0.0767,
+    "Renewables": 0.1587,
+    "Imports": 0.0415,
+    "Own": 0.607
+  },
+  {
+    "period": "2021-05",
+    "Gas": 0.2471,
+    "Demand": 0.0416,
+    "Renewables": 0.1543,
+    "Imports": 0.0521,
+    "Own": 0.5048
+  },
+  {
+    "period": "2021-06",
+    "Gas": 0.3617,
+    "Demand": 0.0278,
+    "Renewables": 0.1583,
+    "Imports": 0.0504,
+    "Own": 0.4018
+  },
+  {
+    "period": "2021-07",
+    "Gas": 0.4638,
+    "Demand": 0.0227,
+    "Renewables": 0.1395,
+    "Imports": 0.0442,
+    "Own": 0.3298
+  },
+  {
+    "period": "2021-08",
+    "Gas": 0.2799,
+    "Demand": 0.0375,
+    "Renewables": 0.1708,
+    "Imports": 0.0606,
+    "Own": 0.4512
+  },
+  {
+    "period": "2021-09",
+    "Gas": 0.2887,
+    "Demand": 0.0148,
+    "Renewables": 0.1437,
+    "Imports": 0.0221,
+    "Own": 0.5306
+  },
+  {
+    "period": "2021-10",
+    "Gas": 0.3041,
+    "Demand": 0.0066,
+    "Renewables": 0.1001,
+    "Imports": 0.0132,
+    "Own": 0.576
+  },
+  {
+    "period": "2021-11",
+    "Gas": 0.2946,
+    "Demand": 0.0069,
+    "Renewables": 0.0969,
+    "Imports": 0.0071,
+    "Own": 0.5945
+  },
+  {
+    "period": "2021-12",
+    "Gas": 0.3175,
+    "Demand": 0.0091,
+    "Renewables": 0.1334,
+    "Imports": 0.0072,
+    "Own": 0.5328
+  },
+  {
+    "period": "2022-01",
+    "Gas": 0.3093,
+    "Demand": 0.0109,
+    "Renewables": 0.1414,
+    "Imports": 0.0062,
+    "Own": 0.5592
+  },
+  {
+    "period": "2022-02",
+    "Gas": 0.2347,
+    "Demand": 0.0106,
+    "Renewables": 0.1645,
+    "Imports": 0.0081,
+    "Own": 0.5821
+  },
+  {
+    "period": "2022-03",
+    "Gas": 0.2304,
+    "Demand": 0.0039,
+    "Renewables": 0.1527,
+    "Imports": 0.0135,
+    "Own": 0.5996
+  },
+  {
+    "period": "2022-04",
+    "Gas": 0.2311,
+    "Demand": 0.0235,
+    "Renewables": 0.2134,
+    "Imports": 0.0192,
+    "Own": 0.5128
+  },
+  {
+    "period": "2022-05",
+    "Gas": 0.2421,
+    "Demand": 0.0442,
+    "Renewables": 0.2408,
+    "Imports": 0.0182,
+    "Own": 0.4548
+  },
+  {
+    "period": "2022-06",
+    "Gas": 0.2147,
+    "Demand": 0.0456,
+    "Renewables": 0.2713,
+    "Imports": 0.019,
+    "Own": 0.4494
+  },
+  {
+    "period": "2022-07",
+    "Gas": 0.2069,
+    "Demand": 0.0687,
+    "Renewables": 0.295,
+    "Imports": 0.0161,
+    "Own": 0.4134
+  },
+  {
+    "period": "2022-08",
+    "Gas": 0.105,
+    "Demand": 0.0398,
+    "Renewables": 0.3131,
+    "Imports": 0.0617,
+    "Own": 0.4805
+  },
+  {
+    "period": "2022-09",
+    "Gas": 0.1106,
+    "Demand": 0.0476,
+    "Renewables": 0.3285,
+    "Imports": 0.0394,
+    "Own": 0.474
+  },
+  {
+    "period": "2022-10",
+    "Gas": 0.1165,
+    "Demand": 0.0269,
+    "Renewables": 0.3341,
+    "Imports": 0.0397,
+    "Own": 0.4828
+  },
+  {
+    "period": "2022-11",
+    "Gas": 0.0905,
+    "Demand": 0.0437,
+    "Renewables": 0.3633,
+    "Imports": 0.035,
+    "Own": 0.4676
+  },
+  {
+    "period": "2022-12",
+    "Gas": 0.0802,
+    "Demand": 0.0634,
+    "Renewables": 0.3782,
+    "Imports": 0.0324,
+    "Own": 0.4458
+  },
+  {
+    "period": "2023-01",
+    "Gas": 0.0549,
+    "Demand": 0.1031,
+    "Renewables": 0.3505,
+    "Imports": 0.0211,
+    "Own": 0.4704
+  },
+  {
+    "period": "2023-02",
+    "Gas": 0.0536,
+    "Demand": 0.0468,
+    "Renewables": 0.2139,
+    "Imports": 0.0086,
+    "Own": 0.6771
+  },
+  {
+    "period": "2023-03",
+    "Gas": 0.0528,
+    "Demand": 0.0394,
+    "Renewables": 0.1974,
+    "Imports": 0.0049,
+    "Own": 0.7055
+  },
+  {
+    "period": "2023-04",
+    "Gas": 0.0492,
+    "Demand": 0.0334,
+    "Renewables": 0.1997,
+    "Imports": 0.0031,
+    "Own": 0.7146
+  },
+  {
+    "period": "2023-05",
+    "Gas": 0.0479,
+    "Demand": 0.0454,
+    "Renewables": 0.1796,
+    "Imports": 0.0052,
+    "Own": 0.7219
+  },
+  {
+    "period": "2023-06",
+    "Gas": 0.0447,
+    "Demand": 0.0229,
+    "Renewables": 0.2584,
+    "Imports": 0.0044,
+    "Own": 0.6696
+  },
+  {
+    "period": "2023-07",
+    "Gas": 0.0492,
+    "Demand": 0.0161,
+    "Renewables": 0.2786,
+    "Imports": 0.0032,
+    "Own": 0.6528
+  },
+  {
+    "period": "2023-08",
+    "Gas": 0.0534,
+    "Demand": 0.0172,
+    "Renewables": 0.2581,
+    "Imports": 0.0073,
+    "Own": 0.6641
+  },
+  {
+    "period": "2023-09",
+    "Gas": 0.0531,
+    "Demand": 0.016,
+    "Renewables": 0.25,
+    "Imports": 0.0403,
+    "Own": 0.6405
+  },
+  {
+    "period": "2023-10",
+    "Gas": 0.0675,
+    "Demand": 0.0128,
+    "Renewables": 0.1816,
+    "Imports": 0.0984,
+    "Own": 0.6396
+  },
+  {
+    "period": "2023-11",
+    "Gas": 0.072,
+    "Demand": 0.0098,
+    "Renewables": 0.185,
+    "Imports": 0.1138,
+    "Own": 0.6193
+  },
+  {
+    "period": "2023-12",
+    "Gas": 0.0809,
+    "Demand": 0.0068,
+    "Renewables": 0.1654,
+    "Imports": 0.1107,
+    "Own": 0.6361
+  },
+  {
+    "period": "2024-01",
+    "Gas": 0.0608,
+    "Demand": 0.0265,
+    "Renewables": 0.1953,
+    "Imports": 0.1178,
+    "Own": 0.5996
+  },
+  {
+    "period": "2024-02",
+    "Gas": 0.0583,
+    "Demand": 0.0164,
+    "Renewables": 0.0875,
+    "Imports": 0.0755,
+    "Own": 0.7625
+  },
+  {
+    "period": "2024-03",
+    "Gas": 0.0516,
+    "Demand": 0.0085,
+    "Renewables": 0.0842,
+    "Imports": 0.0666,
+    "Own": 0.7891
+  },
+  {
+    "period": "2024-04",
+    "Gas": 0.0425,
+    "Demand": 0.0058,
+    "Renewables": 0.0812,
+    "Imports": 0.0634,
+    "Own": 0.8071
+  },
+  {
+    "period": "2024-05",
+    "Gas": 0.0456,
+    "Demand": 0.0083,
+    "Renewables": 0.0836,
+    "Imports": 0.0657,
+    "Own": 0.7968
+  },
+  {
+    "period": "2024-06",
+    "Gas": 0.0645,
+    "Demand": 0.0166,
+    "Renewables": 0.0672,
+    "Imports": 0.0767,
+    "Own": 0.775
+  },
+  {
+    "period": "2024-07",
+    "Gas": 0.0597,
+    "Demand": 0.0162,
+    "Renewables": 0.066,
+    "Imports": 0.0772,
+    "Own": 0.7809
+  },
+  {
+    "period": "2024-08",
+    "Gas": 0.0441,
+    "Demand": 0.0013,
+    "Renewables": 0.0519,
+    "Imports": 0.0825,
+    "Own": 0.8202
+  },
+  {
+    "period": "2024-09",
+    "Gas": 0.0314,
+    "Demand": 0.0131,
+    "Renewables": 0.0566,
+    "Imports": 0.1072,
+    "Own": 0.7918
+  }
+]

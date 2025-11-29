@@ -1,0 +1,10 @@
+[
+  {
+    "horizon": 24,
+    "Gas": 0.0189,
+    "Demand": 0.0123,
+    "Renewables": 0.1405,
+    "Imports": 0.0312,
+    "Own": 0.7971
+  }
+]
