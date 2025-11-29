@@ -32,7 +32,9 @@ interface FEVDTooltipProps {
     payload?: { payload: FEVDTooltipPayload }[];
 }
 
-const LABELS: Array<keyof FEVDFullRow> = [
+type FEVDStackKey = Exclude<keyof FEVDFullRow, "horizon">;
+
+const LABELS: FEVDStackKey[] = [
     "Gas",
     "Renewables",
     "Imports",
@@ -92,7 +94,9 @@ export default function FEVDNowChartTableClient({
         return <p className="text-sm text-neutral-600">No FEVD data found.</p>;
     }
 
-    const chartData = [
+    type ChartRow = { label: string } & Record<FEVDStackKey, number>;
+
+    const chartData: ChartRow[] = [
         ...(hasDemand
             ? [
                 {
@@ -312,7 +316,7 @@ export default function FEVDNowChartTableClient({
                 </thead>
                 <tbody>
                     {(() => {
-                        const labels: Array<[string, keyof FEVDFullRow]> = [
+                        const labels: Array<[string, FEVDStackKey]> = [
                             ["Gas", "Gas"],
                             ["Renewables", "Renewables"],
                             ["Imports", "Imports"],
