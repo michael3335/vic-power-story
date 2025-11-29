@@ -115,7 +115,7 @@ export default async function Home() {
 
         <div style={{ marginTop: "1.75rem" }}>
           <a
-            href="https://example.com/working-paper.pdf" // TODO: replace with real link
+            href="https://example.com/working-paper.pdf"
             style={{
               display: "inline-block",
               padding: "0.75rem 1.25rem",
@@ -124,9 +124,10 @@ export default async function Home() {
               textDecoration: "none",
               fontSize: "0.9rem",
               fontWeight: 500,
+              color: "#111",
             }}
           >
-            Download full working paper (PDF)
+            Download report (PDF)
           </a>
         </div>
       </RevealSection>
@@ -466,6 +467,11 @@ export default async function Home() {
           dynamics about <strong>four‑fifths</strong>. The stacked bars make
           that plain: the big gray chunk is “other / own price”, the green slice
           is renewables, and the tiny amber slice is gas.
+        </p>
+        <p>
+          Here “other / own price” mostly captures shocks that hit electricity
+          prices directly – bidding behaviour, outages, policy shifts and market
+          design – plus the mechanical “own-shock” component of the VAR.
         </p>
         <div className="mt-4 full-bleed">
           <div className="wide-inner">

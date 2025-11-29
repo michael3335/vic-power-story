@@ -104,10 +104,31 @@ export default function RollingBetaChartClient({ data }: Props) {
         start: string;
         end?: string;
         color: string;
+        windowLabel: string;
     }> = [
-        { id: "p1", label: "Phase 1 · Gas-anchored", start: "2015-01", end: "2019-12", color: "#0ea5e9" },
-        { id: "p2", label: "Phase 2 · Crisis/transition", start: "2020-01", end: "2022-12", color: "#f59e0b" },
-        { id: "p3", label: "Phase 3 · Weather/RE-led", start: "2023-01", color: "#16a34a" },
+        {
+            id: "p1",
+            label: "Phase 1 · Gas-anchored",
+            start: "2015-01",
+            end: "2019-12",
+            color: "#0ea5e9",
+            windowLabel: "12-month windows",
+        },
+        {
+            id: "p2",
+            label: "Phase 2 · Crisis/transition",
+            start: "2020-01",
+            end: "2022-12",
+            color: "#f59e0b",
+            windowLabel: "36-month windows",
+        },
+        {
+            id: "p3",
+            label: "Phase 3 · Weather/RE-led",
+            start: "2023-01",
+            color: "#16a34a",
+            windowLabel: "21-month windows",
+        },
     ];
 
     const phaseSummaries = phases.map((phase) => {
@@ -129,9 +150,14 @@ export default function RollingBetaChartClient({ data }: Props) {
     );
 
     const phase1 = phaseSummaries.find((p) => p.id === "p1");
+    const phase2 = phaseSummaries.find((p) => p.id === "p2");
     const phase3 = phaseSummaries.find((p) => p.id === "p3");
     const phase1Avg = phase1?.avgBeta ?? null;
+    const phase2Avg = phase2?.avgBeta ?? null;
     const phase3Avg = phase3?.avgBeta ?? null;
+
+    const formatPercent = (value: number | null) =>
+        value !== null ? `${(value * 100).toFixed(1)}%` : "—";
 
     return (
         <div className="w-full rounded-2xl border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 p-4 shadow-[0_10px_40px_-32px_rgba(0,0,0,0.45)]">
@@ -144,10 +170,11 @@ export default function RollingBetaChartClient({ data }: Props) {
                     electricity prices than they do now.
                 </span>
                 <span className="mt-0.5 block">
-                    2015–19 (gas-anchored):{" "}
-                    {phase1Avg !== null ? `${(phase1Avg * 100).toFixed(1)}%` : "—"} ·{" "}
-                    2023–25 (weather/renewables-led):{" "}
-                    {phase3Avg !== null ? `${(phase3Avg * 100).toFixed(1)}%` : "—"}
+                    Phase averages: 2015–19 (gas-anchored): {formatPercent(phase1Avg)} ·
+                    2023–25 (weather/renewables-led): {formatPercent(phase3Avg)}
+                </span>
+                <span className="mt-0.5 block text-[10px] text-neutral-500">
+                    Crisis/transition: {formatPercent(phase2Avg)} · Weather/RE-led: {formatPercent(phase3Avg)}
                 </span>
                 <span className="mt-0.5 block text-[10px] text-neutral-500">
                     These pass-through numbers report the percent change in wholesale
@@ -350,7 +377,7 @@ export default function RollingBetaChartClient({ data }: Props) {
                                 />
                             </div>
                             <div className="mt-1 text-[10px] text-neutral-500">
-                                {phase.count} monthly windows
+                                {phase.windowLabel}
                             </div>
                         </div>
                     );

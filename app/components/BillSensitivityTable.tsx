@@ -64,14 +64,15 @@ export default function BillSensitivityTable({ demandFirst, renFirst }: Props) {
                         <th className="border border-neutral-300 px-2 py-1">Scenario</th>
                         <th className="border border-neutral-300 px-2 py-1">Shock</th>
                         <th className="border border-neutral-300 px-2 py-1 text-right">FEVD share</th>
-                        <th className="border border-neutral-300 px-2 py-1 text-right">Approx price move</th>
+                        <th className="border border-neutral-300 px-2 py-1 text-right">
+                            Approximate change in average monthly wholesale price (illustrative only)
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     {SCENARIOS.map((row) => {
                         const share = averages[row.key];
-                        const approx = share * row.magnitude * 100;
-                        const sign = approx >= 0 ? "+" : "";
+                        const approx = Math.abs(share * row.magnitude * 100);
                         return (
                             <tr key={row.key}>
                                 <td className="border border-neutral-300 px-2 py-1">{row.label}</td>
@@ -80,7 +81,7 @@ export default function BillSensitivityTable({ demandFirst, renFirst }: Props) {
                                     {(share * 100).toFixed(1)}%
                                 </td>
                                 <td className="border border-neutral-300 px-2 py-1 text-right">
-                                    {share ? `${sign}${approx.toFixed(2)}%` : "—"}
+                                    {share ? `${approx.toFixed(2)}%` : "—"}
                                 </td>
                             </tr>
                         );
@@ -93,10 +94,10 @@ export default function BillSensitivityTable({ demandFirst, renFirst }: Props) {
                 not exact bill changes or elasticities.
             </div>
             <p className="mt-2 text-[11px] text-neutral-600">
-                Each row reports the approximate change in average monthly wholesale
-                price that follows from the scenario’s shock (share × shock magnitude × 100),
-                so the sign shows the direction of the move. The calculations ignore
-                higher-order dynamics and feedbacks, serving only as a simple illustration.
+                Each row reports the approximate magnitude of the average monthly wholesale
+                price move that follows from the scenario’s shock (share × shock magnitude × 100).
+                The direction is implied by whether the shock raises or restricts the driver,
+                and the calculations ignore higher-order dynamics and feedbacks.
             </p>
         </div>
     );
