@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import React from "react";
 import { ACTIVE_SECTION_EVENT } from "./RevealSection";
 

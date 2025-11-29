@@ -54,6 +54,70 @@ main {
   transform: translateY(-1px);
 }
 
+.scroll-cue {
+  position: fixed;
+  bottom: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #555;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.scroll-cue--visible {
+  opacity: 0.85;
+  pointer-events: auto;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.scroll-cue--hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateX(-50%) translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.next-section-indicator {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 17, 17, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #111;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  opacity: 0.9;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.next-section-indicator:hover {
+  transform: translateY(-2px);
+  opacity: 1;
+}
+
 a {
   color: rgb(219, 52, 242);
 }
@@ -87,6 +151,13 @@ a:focus-visible {
   visibility: hidden;
   scroll-snap-align: center;
   scroll-snap-stop: always;
+}
+
+.section-inner {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
 }
 
 .section.active {

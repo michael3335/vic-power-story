@@ -6,6 +6,7 @@ import FEVDNowChartTableClient from "./components/FEVDNowChartTableClient";
 import FEVDTrendStrip from "./components/FEVDTrendStrip";
 import BillSensitivityTable from "./components/BillSensitivityTable";
 import SectionBreadcrumbs from "./components/SectionBreadcrumbs";
+import ScrollCue from "./components/ScrollCue";
 import type { RollingBetaPoint, FEVDFullRow, FEVDTrendPoint } from "@/types/results";
 
 const SECTION_BREADCRUMBS = [
@@ -77,7 +78,10 @@ export default async function Home() {
             color: "#666",
           }}
         >
-          {publishedDate} | Michael Harrison
+          {publishedDate} |{" "}
+          <a href="mailto:contact@michaelharrison.au" style={{ color: "inherit" }}>
+            Michael Harrison
+          </a>
         </p>
         <h1
           style={{
@@ -118,6 +122,7 @@ export default async function Home() {
             Download report (PDF)
           </a>
         </div>
+        <ScrollCue />
       </RevealSection>
 
       <RevealSection sectionId="tldr">
