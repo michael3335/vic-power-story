@@ -74,6 +74,7 @@ export default function RevealSection({
 
     return (
         <section
+            id={idRef.current}
             ref={ref}
             className={`section ${state} ${className}`}
         >
