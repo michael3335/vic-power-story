@@ -21,11 +21,11 @@ export default function PassThroughNarrative({
 
     if (mode === "compact") {
         return (
-            <p>
-                Earlier in the decade, changes in gas prices moved wholesale power
-                prices much more than they do now; by 2023–25 the typical
-                pass-through is close to zero.
-            </p>
+            <ul className="list-disc pl-4 space-y-1 text-sm">
+                <li>Early on, gas price swings flowed straight into power prices.</li>
+                <li>Through the mid-2020s, that link weakened and became less reliable.</li>
+                <li>Now, gas is one driver among many rather than the main act.</li>
+            </ul>
         );
     }
 
@@ -51,4 +51,3 @@ export default function PassThroughNarrative({
         </>
     );
 }
-

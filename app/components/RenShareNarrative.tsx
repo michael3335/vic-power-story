@@ -8,10 +8,10 @@ export default function RenShareNarrative() {
 
     if (mode === "compact") {
         return (
-            <p>
-                Renewables&apos; share of Victorian generation rises sharply over the
-                decade, helping shift prices from being fuel-led to more weather-led.
-            </p>
+            <ul className="list-disc pl-4 space-y-1 text-sm">
+                <li>Renewable generation in Victoria climbs sharply over the decade.</li>
+                <li>That growth helps shift prices from fuel-led to more weather-led.</li>
+            </ul>
         );
     }
 
@@ -26,4 +26,3 @@ export default function RenShareNarrative() {
         </>
     );
 }
-

@@ -8,10 +8,10 @@ export default function FEVDTrendNarrative() {
 
     if (mode === "compact") {
         return (
-            <p>
-                Each panel uses the same 0–100% scale so you can compare drivers over
-                time at a glance.
-            </p>
+            <ul className="list-disc pl-4 space-y-1 text-sm">
+                <li>Each panel tracks how important each driver is over time.</li>
+                <li>You can scan across to see gas fading and renewables rising.</li>
+            </ul>
         );
     }
 
@@ -25,4 +25,3 @@ export default function FEVDTrendNarrative() {
         </p>
     );
 }
-

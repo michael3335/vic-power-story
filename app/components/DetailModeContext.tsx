@@ -26,7 +26,7 @@ export function DetailModeProvider({ children }: ProviderProps) {
 
     return (
         <DetailModeContext.Provider value={{ mode, setMode }}>
-            <div className="relative">
+            <div className="relative" data-detail-mode={mode}>
                 <div className="detail-toggle" aria-label="Toggle detail level">
                     <span className="detail-toggle__mode">
                         {isCompact ? "Compact" : "Detailed"}

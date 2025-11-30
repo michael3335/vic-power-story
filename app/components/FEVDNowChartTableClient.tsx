@@ -10,40 +10,23 @@ import {
     CartesianGrid,
     ResponsiveContainer,
     LabelList,
+    Rectangle,
 } from "recharts";
-import type { LabelContentType, Props as LabelProps } from "recharts/types/component/Label";
+import type {
+    LabelContentType,
+    Props as LabelProps,
+} from "recharts/types/component/Label";
 import type { FEVDFullRow } from "@/types/results";
-import { ACTIVE_SECTION_EVENT } from "./RevealSection";
 
 type Props = {
     demandFirst: FEVDFullRow | null;
     renFirst: FEVDFullRow | null;
-    sectionId?: string;
+    sectionId?: string; // kept for API symmetry, not used now
 };
-
-interface FEVDTooltipPayload {
-    label: string;
-    Gas: number;
-    Renewables: number;
-    Imports: number;
-    Demand: number;
-    Own: number;
-}
-
-interface FEVDTooltipProps {
-    active?: boolean;
-    payload?: { payload: FEVDTooltipPayload }[];
-}
 
 type FEVDStackKey = Exclude<keyof FEVDFullRow, "horizon">;
 
-const LABELS: FEVDStackKey[] = [
-    "Gas",
-    "Renewables",
-    "Imports",
-    "Demand",
-    "Own",
-];
+const LABELS: FEVDStackKey[] = ["Gas", "Renewables", "Imports", "Demand", "Own"];
 
 const COLORS = {
     Gas: "#d97706", // amber-600
@@ -53,34 +36,49 @@ const COLORS = {
     Own: "#6b7280", // gray-500
 } as const;
 
-const CustomTooltip: React.FC<FEVDTooltipProps> = ({ active, payload }) => {
-    if (!active || !payload || !payload.length) return null;
-    const p = payload[0].payload;
+const colorFor = (key: FEVDStackKey) => COLORS[key];
+
+interface FEVDTooltipProps {
+    active?: boolean;
+    payload?: any[];
+    hoveredKey: FEVDStackKey | null;
+}
+
+/** Tooltip: only show the hovered segment (no graph/row name) */
+const CustomTooltip: React.FC<FEVDTooltipProps> = ({
+    active,
+    payload,
+    hoveredKey,
+}) => {
+    if (!active || !payload || !payload.length || !hoveredKey) return null;
+
+    // Find the payload entry that matches the hovered stack key
+    const entry = payload.find((p) => p.dataKey === hoveredKey) ?? payload[0];
+    if (!entry) return null;
+
+    const key = entry.dataKey as FEVDStackKey;
+    const value = entry.value as number;
+    if (typeof value !== "number" || !Number.isFinite(value)) return null;
+
+    const segLabel = key === "Own" ? "Other / own price" : key;
+    const color = colorFor(key);
 
     return (
         <div className="rounded-md border border-neutral-300 bg-white/95 px-3 py-2 text-xs text-black shadow-sm">
-            <div className="mb-1 font-semibold">{p.label}</div>
-            <div className="space-y-1">
-                <div className="flex justify-between">
-                    <span>Gas</span>
-                    <span>{(p.Gas * 100).toFixed(1)}%</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Renewables</span>
-                    <span>{(p.Renewables * 100).toFixed(1)}%</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Imports</span>
-                    <span>{(p.Imports * 100).toFixed(1)}%</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Demand</span>
-                    <span>{(p.Demand * 100).toFixed(1)}%</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Other / own price</span>
-                    <span>{(p.Own * 100).toFixed(1)}%</span>
-                </div>
+            <div className="flex items-center justify-between gap-3">
+                <span className="flex items-center gap-2">
+                    <span
+                        style={{
+                            backgroundColor: color,
+                            width: 10,
+                            height: 10,
+                            borderRadius: 2,
+                            display: "inline-block",
+                        }}
+                    />
+                    {segLabel}
+                </span>
+                <span>{(value * 100).toFixed(1)}%</span>
             </div>
         </div>
     );
@@ -89,31 +87,9 @@ const CustomTooltip: React.FC<FEVDTooltipProps> = ({ active, payload }) => {
 export default function FEVDNowChartTableClient({
     demandFirst,
     renFirst,
-    sectionId,
 }: Props) {
-    const [animate, setAnimate] = React.useState(false);
-    const [animateKey, setAnimateKey] = React.useState(0);
+    const [hoveredKey, setHoveredKey] = React.useState<FEVDStackKey | null>(null);
 
-    React.useEffect(() => {
-        if (!sectionId) return;
-        const handleActivate = (event: Event) => {
-            const detail = (event as CustomEvent<string>).detail;
-            if (detail === sectionId) {
-                setAnimate(true);
-                setAnimateKey((prev) => prev + 1);
-            }
-        };
-        window.addEventListener(
-            ACTIVE_SECTION_EVENT,
-            handleActivate as EventListener
-        );
-        return () => {
-            window.removeEventListener(
-                ACTIVE_SECTION_EVENT,
-                handleActivate as EventListener
-            );
-        };
-    }, [sectionId]);
     const hasDemand = !!demandFirst;
     const hasRen = !!renFirst;
 
@@ -150,20 +126,6 @@ export default function FEVDNowChartTableClient({
             : []),
     ];
 
-    const summaries = chartData.map((row) => {
-        const sorted = LABELS.map((key) => ({
-            key,
-            label: key === "Own" ? "Other / own price" : key,
-            value: row[key],
-        })).sort((a, b) => b.value - a.value);
-
-        return {
-            label: row.label,
-            top: sorted[0],
-            runnerUp: sorted[1],
-        };
-    });
-
     const toNumber = (value?: number | string) => {
         if (typeof value === "number") return value;
         if (typeof value === "string") {
@@ -193,7 +155,7 @@ export default function FEVDNowChartTableClient({
         const heightNum = toNumber(height);
         const xNum = toNumber(x);
         const yNum = toNumber(y);
-        // Avoid cluttering tiny slivers
+
         if (pct < 8 || widthNum < 32) return "";
 
         const text = pct >= 20 ? `${pct.toFixed(0)}%` : `${pct.toFixed(1)}%`;
@@ -212,81 +174,137 @@ export default function FEVDNowChartTableClient({
         );
     };
 
+    /** Row label above each bar, fully left (based on Gas segment's x) */
+    const labelAboveBar: LabelContentType = (props: any) => {
+        const { x, y, index } = props;
+        const row = chartData[index];
+        if (!row) return null;
+
+        const cx = toNumber(x) + 4; // slight padding from left edge of first segment
+        const cy = toNumber(y) - 6;
+
+        return (
+            <text
+                x={cx}
+                y={cy}
+                textAnchor="start"
+                fill="#111827"
+                fontSize={12}
+                fontWeight={500}
+            >
+                {row.label}
+            </text>
+        );
+    };
+
+    // Shared shape: same fill & opacity for normal + active (hovered) state
+    const makeShape =
+        (cursor: boolean) =>
+            (props: any): React.ReactElement =>
+            (
+                <Rectangle
+                    {...props}
+                    fill={props.fill}
+                    fillOpacity={1}
+                    stroke="none"
+                    style={cursor ? { cursor: "pointer" } : undefined}
+                />
+            );
+
     return (
         <div className="space-y-4">
             {/* Chart */}
-            <div className="w-full rounded-2xl border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 p-4 shadow-[0_10px_40px_-32px_rgba(0,0,0,0.45)]">
-                <ResponsiveContainer width="100%" height={230} minWidth={280}>
-                    <BarChart
-                        key={animateKey}
-                        data={chartData}
-                        layout="vertical"
-                        barCategoryGap={24}
-                        barGap={6}
-                        barSize={30}
-                        margin={{ top: 8, right: 24, left: 120, bottom: 8 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <XAxis
-                            type="number"
-                            tick={{ fontSize: 11 }}
-                            tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
-                            domain={[0, 1]}
-                        />
-                        <YAxis
-                            type="category"
-                            dataKey="label"
-                            tick={{ fontSize: 12 }}
-                            width={110}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
+            <div className="w-full">
+                <div className="w-full rounded-2xl border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 p-4 shadow-[0_10px_40px_-32px_rgba(0,0,0,0.45)]">
+                    <ResponsiveContainer width="100%" height={230} minWidth={320}>
+                        <BarChart
+                            data={chartData}
+                            layout="vertical"
+                            barCategoryGap={24}
+                            barGap={6}
+                            barSize={32}
+                            margin={{ top: 28, right: 32, left: 16, bottom: 8 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                            <XAxis
+                                type="number"
+                                tick={{ fontSize: 11 }}
+                                tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
+                                domain={[0, 1]}
+                            />
+                            {/* hide Y-axis labels so bars can be full width */}
+                            <YAxis type="category" dataKey="label" hide />
+                            <Tooltip content={<CustomTooltip hoveredKey={hoveredKey} />} />
 
-                        <Bar
-                            dataKey="Gas"
-                            stackId="a"
-                            fill={COLORS.Gas}
-                            isAnimationActive={animate}
-                        >
-                            <LabelList dataKey="Gas" content={labelInsideBar} />
-                        </Bar>
-                        <Bar
-                            dataKey="Renewables"
-                            stackId="a"
-                            fill={COLORS.Renewables}
-                            isAnimationActive={animate}
-                        >
-                            <LabelList dataKey="Renewables" content={labelInsideBar} />
-                        </Bar>
-                        <Bar
-                            dataKey="Imports"
-                            stackId="a"
-                            fill={COLORS.Imports}
-                            isAnimationActive={animate}
-                        >
-                            <LabelList dataKey="Imports" content={labelInsideBar} />
-                        </Bar>
-                        <Bar
-                            dataKey="Demand"
-                            stackId="a"
-                            fill={COLORS.Demand}
-                            isAnimationActive={animate}
-                        >
-                            <LabelList dataKey="Demand" content={labelInsideBar} />
-                        </Bar>
-                        <Bar
-                            dataKey="Own"
-                            stackId="a"
-                            fill={COLORS.Own}
-                            isAnimationActive={animate}
-                        >
-                            <LabelList dataKey="Own" content={labelInsideBar} />
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
+                            <Bar
+                                dataKey="Gas"
+                                stackId="a"
+                                fill={COLORS.Gas}
+                                isAnimationActive={false}
+                                shape={makeShape(true)}
+                                activeBar={makeShape(true)}
+                                onMouseOver={() => setHoveredKey("Gas")}
+                                onMouseLeave={() => setHoveredKey(null)}
+                            >
+                                {/* Row label above the whole bar, left-aligned */}
+                                <LabelList dataKey="Gas" content={labelAboveBar} />
+                                <LabelList dataKey="Gas" content={labelInsideBar} />
+                            </Bar>
+                            <Bar
+                                dataKey="Renewables"
+                                stackId="a"
+                                fill={COLORS.Renewables}
+                                isAnimationActive={false}
+                                shape={makeShape(true)}
+                                activeBar={makeShape(true)}
+                                onMouseOver={() => setHoveredKey("Renewables")}
+                                onMouseLeave={() => setHoveredKey(null)}
+                            >
+                                <LabelList dataKey="Renewables" content={labelInsideBar} />
+                            </Bar>
+                            <Bar
+                                dataKey="Imports"
+                                stackId="a"
+                                fill={COLORS.Imports}
+                                isAnimationActive={false}
+                                shape={makeShape(true)}
+                                activeBar={makeShape(true)}
+                                onMouseOver={() => setHoveredKey("Imports")}
+                                onMouseLeave={() => setHoveredKey(null)}
+                            >
+                                <LabelList dataKey="Imports" content={labelInsideBar} />
+                            </Bar>
+                            <Bar
+                                dataKey="Demand"
+                                stackId="a"
+                                fill={COLORS.Demand}
+                                isAnimationActive={false}
+                                shape={makeShape(true)}
+                                activeBar={makeShape(true)}
+                                onMouseOver={() => setHoveredKey("Demand")}
+                                onMouseLeave={() => setHoveredKey(null)}
+                            >
+                                <LabelList dataKey="Demand" content={labelInsideBar} />
+                            </Bar>
+                            <Bar
+                                dataKey="Own"
+                                stackId="a"
+                                fill={COLORS.Own}
+                                isAnimationActive={false}
+                                shape={makeShape(true)}
+                                activeBar={makeShape(true)}
+                                onMouseOver={() => setHoveredKey("Own")}
+                                onMouseLeave={() => setHoveredKey(null)}
+                            >
+                                <LabelList dataKey="Own" content={labelInsideBar} />
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
-            {/* Horizontal legend */}
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[11px] text-neutral-700">
+            {/* Horizontal legend: spread along x-axis, centered */}
+            <div className="mt-3 flex w-full flex-wrap items-center justify-center gap-x-10 gap-y-2 text-[11px] text-neutral-700">
                 {([
                     ["Gas", COLORS.Gas],
                     ["Renewables", COLORS.Renewables],
@@ -309,80 +327,90 @@ export default function FEVDNowChartTableClient({
                 ))}
             </div>
 
-            <table className="mt-2 w-full border-collapse text-xs">
-                <thead>
-                    <tr>
-                        <th className="border border-neutral-300 px-2 py-1 text-left">
-                            Driver
-                        </th>
-                        {hasDemand && (
-                            <th className="border border-neutral-300 px-2 py-1 text-right">
-                                Demand first
+            {/* Table */}
+            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+                <table className="w-full border-collapse text-xs">
+                    <thead>
+                        <tr className="bg-neutral-50">
+                            <th className="border border-neutral-200 px-3 py-2 text-left">
+                                Driver
                             </th>
-                        )}
-                        {hasRen && (
-                            <th className="border border-neutral-300 px-2 py-1 text-right">
-                                Renewables first
-                            </th>
-                        )}
-                        {hasDemand && hasRen && (
-                            <th className="border border-neutral-300 px-2 py-1 text-right">
-                                Δ (pp)
-                            </th>
-                        )}
-                    </tr>
-                </thead>
-                <tbody>
-                    {(() => {
-                        const labels: Array<[string, FEVDStackKey]> = [
-                            ["Gas", "Gas"],
-                            ["Renewables", "Renewables"],
-                            ["Imports", "Imports"],
-                            ["Demand", "Demand"],
-                            ["Other / own price", "Own"],
-                        ];
+                            {hasDemand && (
+                                <th className="border border-neutral-200 px-3 py-2 text-right">
+                                    Demand first
+                                </th>
+                            )}
+                            {hasRen && (
+                                <th className="border border-neutral-200 px-3 py-2 text-right">
+                                    Renewables first
+                                </th>
+                            )}
+                            {hasDemand && hasRen && (
+                                <th className="border border-neutral-200 px-3 py-2 text-right">
+                                    Δ (pp)
+                                </th>
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {(() => {
+                            const labels: Array<[string, FEVDStackKey]> = [
+                                ["Gas", "Gas"],
+                                ["Renewables", "Renewables"],
+                                ["Imports", "Imports"],
+                                ["Demand", "Demand"],
+                                ["Other / own price", "Own"],
+                            ];
 
-                        const isMax = (val: number | null, other: number | null) =>
-                            val !== null && (other === null || val >= other);
+                            const isMax = (val: number | null, other: number | null) =>
+                                val !== null && (other === null || val >= other);
 
-                        return labels.map(([label, key]) => {
-                            const d = hasDemand ? demandFirst![key] : null;
-                            const r = hasRen ? renFirst![key] : null;
+                            return labels.map(([label, key]) => {
+                                const d = hasDemand ? demandFirst![key] : null;
+                                const r = hasRen ? renFirst![key] : null;
 
-                            return (
-                                <tr key={label}>
-                                    <td className="border border-neutral-300 px-2 py-1">
-                                        {label}
-                                    </td>
-                                    {hasDemand && (
-                                        <td
-                                            className={`border border-neutral-300 px-2 py-1 text-right ${isMax(d, r) ? "font-semibold" : ""
-                                                }`}
-                                        >
-                                            {d !== null ? `${(d * 100).toFixed(1)}%` : "—"}
+                                return (
+                                    <tr
+                                        key={label}
+                                        className="odd:bg-white even:bg-neutral-50/70"
+                                    >
+                                        <td className="border border-neutral-200 px-3 py-2">
+                                            {label}
                                         </td>
-                                    )}
-                                    {hasRen && (
-                                        <td
-                                            className={`border border-neutral-300 px-2 py-1 text-right ${isMax(r, d) ? "font-semibold" : ""
-                                                }`}
-                                        >
-                                            {r !== null ? `${(r * 100).toFixed(1)}%` : "—"}
-                                        </td>
-                                    )}
-                                    {hasDemand && hasRen && (
-                                        <td className="border border-neutral-300 px-2 py-1 text-right">
-                                            {d !== null && r !== null
-                                                ? `${((r - d) * 100).toFixed(1)} pp`
-                                                : "—"}
-                                        </td>
-                                    )}
-                                </tr>
-                            );
-                        });
-                    })()}
-                </tbody>
-            </table>
+                                        {hasDemand && (
+                                            <td
+                                                className={`border border-neutral-200 px-3 py-2 text-right ${isMax(d, r)
+                                                    ? "font-semibold text-neutral-900"
+                                                    : "text-neutral-700"
+                                                    }`}
+                                            >
+                                                {d !== null ? `${(d * 100).toFixed(1)}%` : "—"}
+                                            </td>
+                                        )}
+                                        {hasRen && (
+                                            <td
+                                                className={`border border-neutral-200 px-3 py-2 text-right ${isMax(r, d)
+                                                    ? "font-semibold text-neutral-900"
+                                                    : "text-neutral-700"
+                                                    }`}
+                                            >
+                                                {r !== null ? `${(r * 100).toFixed(1)}%` : "—"}
+                                            </td>
+                                        )}
+                                        {hasDemand && hasRen && (
+                                            <td className="border border-neutral-200 px-3 py-2 text-right text-neutral-700">
+                                                {d !== null && r !== null
+                                                    ? `${((r - d) * 100).toFixed(1)} pp`
+                                                    : "—"}
+                                            </td>
+                                        )}
+                                    </tr>
+                                );
+                            });
+                        })()}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

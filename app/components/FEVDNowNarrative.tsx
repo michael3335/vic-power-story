@@ -8,11 +8,11 @@ export default function FEVDNowNarrative() {
 
     if (mode === "compact") {
         return (
-            <p>
-                The stacked bars summarise how much each driver contributes to price
-                ups and downs over a two-year horizon, with other/own price
-                dynamics dominating and renewables next.
-            </p>
+            <ul className="list-disc pl-4 space-y-1 text-sm">
+                <li>The bars show what is driving price swings now.</li>
+                <li>Most movement comes from overall market conditions, not gas alone.</li>
+                <li>Renewables explain more of the action than gas in the latest data.</li>
+            </ul>
         );
     }
 
@@ -25,4 +25,3 @@ export default function FEVDNowNarrative() {
         </p>
     );
 }
-
