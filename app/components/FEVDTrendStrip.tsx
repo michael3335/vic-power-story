@@ -15,9 +15,11 @@ import {
 } from "recharts";
 import type { CategoricalChartFunc } from "recharts/types/chart/types";
 import type { FEVDTrendPoint } from "@/types/results";
+import { ACTIVE_SECTION_EVENT } from "./RevealSection";
 
 type Props = {
     data: FEVDTrendPoint[];
+    sectionId?: string;
 };
 
 type DriverKey = "Gas" | "Renewables" | "Imports" | "Demand" | "Own";
@@ -123,8 +125,31 @@ const CustomTooltip: React.FC<FEVDTrendTooltipProps> = ({
     );
 };
 
-export default function FEVDTrendStrip({ data }: Props) {
+export default function FEVDTrendStrip({ data, sectionId }: Props) {
     const [activePeriod, setActivePeriod] = React.useState<string | null>(null);
+    const [animate, setAnimate] = React.useState(false);
+    const [animateKey, setAnimateKey] = React.useState(0);
+
+    React.useEffect(() => {
+        if (!sectionId) return;
+        const handleActivate = (event: Event) => {
+            const detail = (event as CustomEvent<string>).detail;
+            if (detail === sectionId) {
+                setAnimate(true);
+                setAnimateKey((prev) => prev + 1);
+            }
+        };
+        window.addEventListener(
+            ACTIVE_SECTION_EVENT,
+            handleActivate as EventListener
+        );
+        return () => {
+            window.removeEventListener(
+                ACTIVE_SECTION_EVENT,
+                handleActivate as EventListener
+            );
+        };
+    }, [sectionId]);
 
     if (!data || data.length === 0) {
         return (
@@ -135,28 +160,17 @@ export default function FEVDTrendStrip({ data }: Props) {
         );
     }
 
-    const drivers: DriverKey[] = [
-        "Own",
-        "Renewables",
-        "Demand",
-        "Imports",
-        "Gas",
-    ];
+    const drivers: DriverKey[] = ["Own", "Renewables", "Demand", "Imports", "Gas"];
     const yDomain: [number, number] = [0, 1];
     const PANEL_HEIGHT = 140;
     const lastPeriod = data[data.length - 1]?.period ?? null;
 
-    // Year ticks so time structure is visible in each panel
-    const years = Array.from(
-        new Set(data.map((d) => d.period.slice(0, 4)))
-    );
-    const yearTicks = years
-        .map((year) => {
-            const first = data.find((d) => d.period.startsWith(year));
-            return first ? first.period : `${year}-01`;
-        });
+    const years = Array.from(new Set(data.map((d) => d.period.slice(0, 4))));
+    const yearTicks = years.map((year) => {
+        const first = data.find((d) => d.period.startsWith(year));
+        return first ? first.period : `${year}-01`;
+    });
 
-    // Per-driver min/max to summarise the range of FEVD shares over the sample
     const stats = drivers.reduce(
         (acc, driver) => {
             const values = data
@@ -194,163 +208,147 @@ export default function FEVDTrendStrip({ data }: Props) {
 
     return (
         <div className="rounded-2xl border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 p-3 lg:p-4 shadow-[0_10px_40px_-32px_rgba(0,0,0,0.45)]">
-            {/* Centered title + subtitle */}
-            <div className="mb-2 text-center">
-                <div className="text-sm font-semibold text-neutral-900">
-                    Drivers of price variation
-                </div>
-                <div className="text-xs text-neutral-600">
-                    How each driver’s importance changes over time (phase bands match the
-                    story above)
-                </div>
-            </div>
-
             {/* Small multiples: one panel per driver, all on 0–100% scale */}
-            <div className="mt-2 grid gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {drivers.map((driver) => {
-                    const meta = DRIVER_META[driver];
-                    const { min, max } = stats[driver];
-                    const currentPoint = activePoint ?? latest;
-                    const currentShare =
-                        currentPoint && typeof currentPoint[driver] === "number"
-                            ? (currentPoint[driver] as number)
-                            : null;
-                    const latestShare =
-                        latest && typeof latest[driver] === "number"
-                            ? (latest[driver] as number)
-                            : null;
+            <div className="mt-2 flex justify-center">
+                <div className="grid gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-3 max-w-[960px]">
+                    {drivers.map((driver) => {
+                        const meta = DRIVER_META[driver];
+                        const { min, max } = stats[driver];
+                        const currentPoint = activePoint ?? latest;
+                        const currentShare =
+                            currentPoint && typeof currentPoint[driver] === "number"
+                                ? (currentPoint[driver] as number)
+                                : null;
+                        const latestShare =
+                            latest && typeof latest[driver] === "number"
+                                ? (latest[driver] as number)
+                                : null;
 
-                    return (
-                        <div
-                            key={driver}
-                            className="flex flex-col rounded-xl border border-neutral-200 bg-white/90 px-3 py-2 text-[11px] text-neutral-800 shadow-sm"
-                        >
-                            <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
-                                <div className="flex items-baseline gap-2">
-                                    <span
-                                        style={{
-                                            backgroundColor: meta.color,
-                                            width: 10,
-                                            height: 10,
-                                            borderRadius: 2,
-                                            display: "inline-block",
-                                        }}
-                                    />
-                                    <span className="font-semibold text-neutral-900">
-                                        {meta.label}
-                                    </span>
-                                    {latestShare !== null && (
-                                        <span className="text-[10px] text-neutral-500 whitespace-nowrap">
-                                            Range: {(min * 100).toFixed(1)}–
-                                            {(max * 100).toFixed(1)}%
-                                        </span>
-                                    )}
-                                </div>
-                                {currentShare !== null && (
-                                    <div className="text-right text-[10px] text-neutral-500 whitespace-nowrap">
-                                        At{" "}
-                                        {formatPeriodLabel(
-                                            (activePoint ?? latest)?.period ?? null
-                                        )}
-                                        : {(currentShare * 100).toFixed(1)}%
-                                    </div>
-                                )}
-                            </div>
-                            <div className="w-full">
-                                <ResponsiveContainer
-                                    width="100%"
-                                    height={PANEL_HEIGHT}
-                                    minWidth={0}
-                                >
-                                    <AreaChart
-                                        data={data}
-                                        margin={{ top: 4, right: 4, left: 0, bottom: 14 }}
-                                        onMouseMove={handleMouseMove}
-                                        onMouseLeave={() => setActivePeriod(null)}
-                                    >
-                                        {PHASES.map((phase) => (
-                                            <ReferenceArea
-                                                key={phase.id}
-                                                x1={phase.start}
-                                                x2={phase.end ?? lastPeriod ?? phase.start}
-                                                strokeOpacity={0}
-                                                fill="#e5e7eb"
-                                                fillOpacity={0.25}
-                                            />
-                                        ))}
-                                        <CartesianGrid
-                                            strokeDasharray="3 3"
-                                            stroke="#e5e7eb"
-                                            vertical={false}
-                                        />
-                                        <XAxis
-                                            dataKey="period"
-                                            ticks={yearTicks}
-                                            tick={{ fontSize: 8, fill: "#9ca3af" }}
-                                            tickFormatter={(v) =>
-                                                String(v).slice(0, 4)
-                                            }
-                                            axisLine={false}
-                                            tickLine={false}
-                                        />
-                                        <YAxis
-                                            tick={{ fontSize: 9, fill: "#6b7280" }}
-                                            tickFormatter={(v) =>
-                                                `${(v * 100).toFixed(0)}%`
-                                            }
-                                            domain={yDomain}
-                                            width={32}
-                                        />
-                                        <Tooltip content={<CustomTooltip />} />
-                                        {activePeriod && (
-                                            <ReferenceLine
-                                                x={activePeriod}
-                                                stroke="#9ca3af"
-                                                strokeDasharray="3 3"
-                                                strokeWidth={1}
-                                            />
-                                        )}
-                                        <Area
-                                            type="monotone"
-                                            dataKey={driver}
-                                            stroke={meta.color}
-                                            strokeWidth={2}
-                                            fill={meta.color}
-                                            fillOpacity={0.16}
-                                            dot={false}
-                                            activeDot={{
-                                                r: 3,
-                                                stroke: meta.color,
-                                                fill: "#ffffff",
-                                                strokeWidth: 1.5,
+                        return (
+                            <div
+                                key={driver}
+                                className="flex flex-col rounded-xl border border-neutral-200 bg-white/90 px-3 py-2 text-[11px] text-neutral-800 shadow-sm"
+                            >
+                                <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+                                    <div className="flex items-baseline gap-2">
+                                        <span
+                                            style={{
+                                                backgroundColor: meta.color,
+                                                width: 10,
+                                                height: 10,
+                                                borderRadius: 2,
+                                                display: "inline-block",
+                                                marginRight: 6,
                                             }}
-                                            isAnimationActive={false}
                                         />
-                                        {activePeriod && activePoint && currentShare !== null && (
-                                            <ReferenceDot
-                                                x={activePeriod}
-                                                y={currentShare}
-                                                r={3.5}
-                                                fill="#ffffff"
-                                                stroke={meta.color}
-                                                strokeWidth={1.5}
-                                            />
+                                        <span className="font-semibold text-neutral-900">
+                                            {meta.label}
+                                        </span>
+                                        {latestShare !== null && (
+                                            <span className="text-[10px] text-neutral-500 whitespace-nowrap">
+                                                Range: {(min * 100).toFixed(1)}–
+                                                {(max * 100).toFixed(1)}%
+                                            </span>
                                         )}
-                                    </AreaChart>
-                                </ResponsiveContainer>
+                                    </div>
+                                </div>
+
+                                <div className="w-full">
+                                    {/* 50% width and centered */}
+                                    <div className="mx-auto w-1/2">
+                                        <ResponsiveContainer
+                                            width="100%"   // fill the 50%-width wrapper
+                                            height={PANEL_HEIGHT}
+                                            minWidth={0}
+                                        >
+                                            <AreaChart
+                                                key={`${animateKey}-${driver}`}
+                                                data={data}
+                                                margin={{
+                                                    top: 4,
+                                                    right: 4,
+                                                    left: 0,
+                                                    bottom: 14,
+                                                }}
+                                                onMouseMove={handleMouseMove}
+                                                onMouseLeave={() => setActivePeriod(null)}
+                                            >
+                                                {PHASES.map((phase) => (
+                                                    <ReferenceArea
+                                                        key={phase.id}
+                                                        x1={phase.start}
+                                                        x2={phase.end ?? lastPeriod ?? phase.start}
+                                                        strokeOpacity={0}
+                                                        fill="#e5e7eb"
+                                                        fillOpacity={0.25}
+                                                    />
+                                                ))}
+                                                <CartesianGrid
+                                                    strokeDasharray="3 3"
+                                                    stroke="#e5e7eb"
+                                                    vertical={false}
+                                                />
+                                                <XAxis
+                                                    dataKey="period"
+                                                    ticks={yearTicks}
+                                                    tick={{ fontSize: 8, fill: "#9ca3af" }}
+                                                    tickFormatter={(v) => String(v).slice(0, 4)}
+                                                    axisLine={false}
+                                                    tickLine={false}
+                                                />
+                                                <YAxis
+                                                    tick={{ fontSize: 9, fill: "#6b7280" }}
+                                                    tickFormatter={(v) =>
+                                                        `${(v * 100).toFixed(0)}%`
+                                                    }
+                                                    domain={yDomain}
+                                                    width={32}
+                                                />
+                                                <Tooltip content={<CustomTooltip />} />
+                                                {activePeriod && (
+                                                    <ReferenceLine
+                                                        x={activePeriod}
+                                                        stroke="#9ca3af"
+                                                        strokeDasharray="3 3"
+                                                        strokeWidth={1}
+                                                    />
+                                                )}
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey={driver}
+                                                    stroke={meta.color}
+                                                    strokeWidth={2}
+                                                    fill={meta.color}
+                                                    fillOpacity={0.16}
+                                                    dot={false}
+                                                    activeDot={{
+                                                        r: 3,
+                                                        stroke: meta.color,
+                                                        fill: "#ffffff",
+                                                        strokeWidth: 1.5,
+                                                    }}
+                                                    isAnimationActive={animate}
+                                                />
+                                                {activePeriod &&
+                                                    activePoint &&
+                                                    currentShare !== null && (
+                                                        <ReferenceDot
+                                                            x={activePeriod}
+                                                            y={currentShare}
+                                                            r={3.5}
+                                                            fill="#ffffff"
+                                                            stroke={meta.color}
+                                                            strokeWidth={1.5}
+                                                        />
+                                                    )}
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </div>
-            <div className="mt-2 text-[10px] text-neutral-600">
-                Each panel shows that driver’s share of total price variance over time
-                (0–100% scale). Across the decade,{" "}
-                <span className="font-semibold">other / own price</span> dominates,
-                renewables gradually rise, and gas stays relatively small in the most
-                recent years. The{" "}
-                <span className="font-semibold">range</span> summary helps show how much
-                each driver usually moves.
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

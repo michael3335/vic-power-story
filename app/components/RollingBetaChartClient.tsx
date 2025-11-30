@@ -14,9 +14,11 @@ import {
     ResponsiveContainer,
 } from "recharts";
 import type { RollingBetaPoint } from "@/types/results";
+import { ACTIVE_SECTION_EVENT } from "./RevealSection";
 
 type Props = {
     data: RollingBetaPoint[];
+    sectionId?: string;
 };
 
 type RollingTooltipProps = {
@@ -61,7 +63,30 @@ const CustomTooltip: React.FC<RollingTooltipProps> = ({
     );
 };
 
-export default function RollingBetaChartClient({ data }: Props) {
+export default function RollingBetaChartClient({ data, sectionId }: Props) {
+    const [animate, setAnimate] = React.useState(false);
+    const [animateKey, setAnimateKey] = React.useState(0);
+
+    React.useEffect(() => {
+        if (!sectionId) return;
+        const handleActivate = (event: Event) => {
+            const detail = (event as CustomEvent<string>).detail;
+            if (detail === sectionId) {
+                setAnimate(true);
+                setAnimateKey((prev) => prev + 1);
+            }
+        };
+        window.addEventListener(
+            ACTIVE_SECTION_EVENT,
+            handleActivate as EventListener
+        );
+        return () => {
+            window.removeEventListener(
+                ACTIVE_SECTION_EVENT,
+                handleActivate as EventListener
+            );
+        };
+    }, [sectionId]);
     if (!data || !data.length) {
         return (
             <p className="text-sm text-neutral-600">No rolling beta data found.</p>
@@ -156,44 +181,11 @@ export default function RollingBetaChartClient({ data }: Props) {
     const phase2Avg = phase2?.avgBeta ?? null;
     const phase3Avg = phase3?.avgBeta ?? null;
 
-    const formatPercent = (value: number | null) =>
-        value !== null ? `${(value * 100).toFixed(1)}%` : "—";
-
     return (
         <div className="w-full rounded-2xl border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 p-4 shadow-[0_10px_40px_-32px_rgba(0,0,0,0.45)]">
-            <div className="mb-2 text-sm font-semibold text-neutral-900">
-                How much do gas prices move electricity prices?
-            </div>
-            <div className="mb-3 text-[11px] text-neutral-700">
-                <span className="block">
-                    Earlier in the decade, changes in gas prices had a clearer effect on
-                    electricity prices than they do now.
-                </span>
-                <span className="mt-0.5 block">
-                    Phase averages: 2015–19 (gas-anchored): {formatPercent(phase1Avg)} ·
-                    2023–25 (weather/renewables-led): {formatPercent(phase3Avg)}
-                </span>
-                <span className="mt-0.5 block text-[10px] text-neutral-500">
-                    Crisis/transition: {formatPercent(phase2Avg)} · Weather/RE-led: {formatPercent(phase3Avg)}
-                </span>
-                <span className="mt-0.5 block text-[10px] text-neutral-500">
-                    These pass-through numbers report the percent change in wholesale
-                    power price per 1% move in gas price (beta × 100), so the line can
-                    be read as an elasticity-like response.
-                </span>
-                <span className="mt-0.5 block text-[10px] text-neutral-500">
-                    When the coefficient turns negative—as it often does after 2023—it
-                    means renewables, weather or network conditions are pushing prices
-                    down even as gas stays high, which is why the red dots flag
-                    opposite movements.
-                </span>
-                <span className="mt-0.5 block">
-                    Shaded bands match the three phases in the narrative so you can see
-                    the break points directly on the chart.
-                </span>
-            </div>
             <ResponsiveContainer width="100%" height={CHART_HEIGHT} minWidth={300}>
                 <ComposedChart
+                    key={animateKey}
                     data={chartData}
                     margin={{ top: 12, right: 18, left: 8, bottom: 12 }}
                 >
@@ -262,7 +254,7 @@ export default function RollingBetaChartClient({ data }: Props) {
                         stackId="band"
                         stroke="none"
                         fill="transparent"
-                        isAnimationActive={false}
+                        isAnimationActive={animate}
                     />
                     <Area
                         yAxisId="left"
@@ -271,7 +263,7 @@ export default function RollingBetaChartClient({ data }: Props) {
                         stackId="band"
                         stroke="none"
                         fill="url(#bandFill)"
-                        isAnimationActive={false}
+                        isAnimationActive={animate}
                     />
                     {/* Phase boundaries (on top of band but under markers) */}
                     <ReferenceLine
@@ -292,7 +284,7 @@ export default function RollingBetaChartClient({ data }: Props) {
                         dataKey="beta"
                         stroke="#111827"
                         strokeWidth={2.2}
-                        isAnimationActive={false}
+                        isAnimationActive={animate}
                         activeDot={(props) => {
                             const { cx, cy, payload } = props;
                             const point = payload as RollingBetaPoint;

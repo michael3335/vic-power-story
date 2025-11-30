@@ -13,10 +13,12 @@ import {
 } from "recharts";
 import type { LabelContentType, Props as LabelProps } from "recharts/types/component/Label";
 import type { FEVDFullRow } from "@/types/results";
+import { ACTIVE_SECTION_EVENT } from "./RevealSection";
 
 type Props = {
     demandFirst: FEVDFullRow | null;
     renFirst: FEVDFullRow | null;
+    sectionId?: string;
 };
 
 interface FEVDTooltipPayload {
@@ -87,7 +89,31 @@ const CustomTooltip: React.FC<FEVDTooltipProps> = ({ active, payload }) => {
 export default function FEVDNowChartTableClient({
     demandFirst,
     renFirst,
+    sectionId,
 }: Props) {
+    const [animate, setAnimate] = React.useState(false);
+    const [animateKey, setAnimateKey] = React.useState(0);
+
+    React.useEffect(() => {
+        if (!sectionId) return;
+        const handleActivate = (event: Event) => {
+            const detail = (event as CustomEvent<string>).detail;
+            if (detail === sectionId) {
+                setAnimate(true);
+                setAnimateKey((prev) => prev + 1);
+            }
+        };
+        window.addEventListener(
+            ACTIVE_SECTION_EVENT,
+            handleActivate as EventListener
+        );
+        return () => {
+            window.removeEventListener(
+                ACTIVE_SECTION_EVENT,
+                handleActivate as EventListener
+            );
+        };
+    }, [sectionId]);
     const hasDemand = !!demandFirst;
     const hasRen = !!renFirst;
 
@@ -186,48 +212,13 @@ export default function FEVDNowChartTableClient({
         );
     };
 
-    const CHART_HEIGHT = 230;
-
     return (
         <div className="space-y-4">
-            {/* Local title / strapline */}
-            <div className="text-center text-xs text-neutral-700">
-                <div className="font-semibold">
-                    What actually drives price ups and downs?
-                </div>
-                <div className="mt-1 text-[11px] text-neutral-600">
-                    Looking over the next two years, most of the movement in prices comes
-                    from{" "}
-                    <span className="whitespace-nowrap">other / own price</span>{" "}
-                    dynamics, with renewables next and gas only a small slice.
-                </div>
-            </div>
-
-            {/* Summary chips */}
-            <div className="mx-auto grid max-w-xl gap-3 sm:grid-cols-2">
-                {summaries.map((s) => (
-                    <div
-                        key={s.label}
-                        className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-2 text-[11px] shadow-sm"
-                    >
-                        <div className="text-[10px] uppercase tracking-wide text-neutral-500">
-                            {s.label}
-                        </div>
-                        <div className="text-xs font-semibold text-neutral-900">
-                            {s.top.label} leads ({(s.top.value * 100).toFixed(1)}%)
-                        </div>
-                        <div className="text-[11px] text-neutral-600">
-                            Runner up: {s.runnerUp.label} (
-                            {(s.runnerUp.value * 100).toFixed(1)}%)
-                        </div>
-                    </div>
-                ))}
-            </div>
-
             {/* Chart */}
             <div className="w-full rounded-2xl border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 p-4 shadow-[0_10px_40px_-32px_rgba(0,0,0,0.45)]">
-                <ResponsiveContainer width="100%" height={CHART_HEIGHT} minWidth={280}>
+                <ResponsiveContainer width="100%" height={230} minWidth={280}>
                     <BarChart
+                        key={animateKey}
                         data={chartData}
                         layout="vertical"
                         barCategoryGap={24}
@@ -250,23 +241,44 @@ export default function FEVDNowChartTableClient({
                         />
                         <Tooltip content={<CustomTooltip />} />
 
-                        <Bar dataKey="Gas" stackId="a" fill={COLORS.Gas}>
+                        <Bar
+                            dataKey="Gas"
+                            stackId="a"
+                            fill={COLORS.Gas}
+                            isAnimationActive={animate}
+                        >
                             <LabelList dataKey="Gas" content={labelInsideBar} />
                         </Bar>
                         <Bar
                             dataKey="Renewables"
                             stackId="a"
                             fill={COLORS.Renewables}
+                            isAnimationActive={animate}
                         >
                             <LabelList dataKey="Renewables" content={labelInsideBar} />
                         </Bar>
-                        <Bar dataKey="Imports" stackId="a" fill={COLORS.Imports}>
+                        <Bar
+                            dataKey="Imports"
+                            stackId="a"
+                            fill={COLORS.Imports}
+                            isAnimationActive={animate}
+                        >
                             <LabelList dataKey="Imports" content={labelInsideBar} />
                         </Bar>
-                        <Bar dataKey="Demand" stackId="a" fill={COLORS.Demand}>
+                        <Bar
+                            dataKey="Demand"
+                            stackId="a"
+                            fill={COLORS.Demand}
+                            isAnimationActive={animate}
+                        >
                             <LabelList dataKey="Demand" content={labelInsideBar} />
                         </Bar>
-                        <Bar dataKey="Own" stackId="a" fill={COLORS.Own}>
+                        <Bar
+                            dataKey="Own"
+                            stackId="a"
+                            fill={COLORS.Own}
+                            isAnimationActive={animate}
+                        >
                             <LabelList dataKey="Own" content={labelInsideBar} />
                         </Bar>
                     </BarChart>
@@ -295,13 +307,6 @@ export default function FEVDNowChartTableClient({
                         <span>{label}</span>
                     </div>
                 ))}
-            </div>
-
-            {/* Comparative table */}
-            <div className="text-[11px] text-neutral-600">
-                Bars and numbers show how much each driver contributes to price ups and
-                downs over a two-year horizon. The two rows use slightly different
-                technical modelling choices; they tell the same big-picture story.
             </div>
 
             <table className="mt-2 w-full border-collapse text-xs">

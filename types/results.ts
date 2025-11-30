@@ -24,6 +24,11 @@ export type FEVDTrendPoint = {
   Own: number;
 };
 
+export type RenSharePoint = {
+  date: string; // "YYYY-MM"
+  ren_share: number; // share of generation in [0,1]
+};
+
 // Events/markers to annotate the rolling beta chart
 export type ChartEvent =
   | {

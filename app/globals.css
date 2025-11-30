@@ -1,6 +1,7 @@
 :root {
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  --accent-pink: rgb(219, 52, 242);
 }
 
 html,
@@ -26,7 +27,7 @@ body {
 main {
   max-width: 760px;
   margin: 0 auto;
-  padding: 3rem 1.25rem 4rem;
+  padding: 2rem 1.25rem 3.5rem;
   scroll-snap-type: y mandatory;
 }
 
@@ -39,17 +40,17 @@ main {
   display: inline-block;
   padding: 0.75rem 1.25rem;
   border-radius: 999px;
-  border: 1px solid rgb(219, 52, 242);
+  border: 1px solid var(--accent-pink);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
-  color: rgb(219, 52, 242);
+  color: var(--accent-pink);
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .hero-cta:hover,
 .hero-cta:focus-visible {
-  background: rgb(219, 52, 242);
+  background: var(--accent-pink);
   color: #fff;
   transform: translateY(-1px);
 }
@@ -119,11 +120,49 @@ main {
 }
 
 a {
-  color: rgb(219, 52, 242);
+  color: var(--accent-pink);
+  /* base pink */
+  transition: color 0.15s ease-in-out;
 }
 
 a:hover,
 a:focus-visible {
+  color: rgb(162, 19, 184);
+  /* darker pink on hover */
+  text-decoration: underline;
+}
+
+a.contact-link {
+  color: inherit;
+  text-decoration: underline;
+  transition: color 0.15s ease-in-out;
+}
+
+a.contact-link:hover {
+  color: rgb(219, 52, 242);
+}
+
+.data-sources {
+  font-size: 0.75rem;
+  color: #777777;
+}
+
+.data-sources a {
+  font-size: 0.75rem;
+  color: #777777;
+  /* grey by default */
+  text-decoration: none;
+  text-transform: uppercase;
+  /* 👈 CAPS LOCK */
+  letter-spacing: 0.06em;
+  /* optional: a bit of spacing */
+  transition: color 0.15s ease-in-out, text-decoration 0.15s ease-in-out;
+}
+
+.data-sources a:hover,
+.data-sources a:focus-visible {
+  color: var(--accent-pink);
+  /* pink on hover */
   text-decoration: underline;
 }
 
@@ -143,6 +182,7 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   gap: 0.6rem;
   opacity: 0;
   transform: translateY(36px);
@@ -157,7 +197,7 @@ a:focus-visible {
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 0;
 }
 
 .section.active {
@@ -185,4 +225,95 @@ h3 {
 p {
   line-height: 1.7;
   margin: 0.5rem 0 0.75rem;
+}
+
+/* Detail toggle */
+.detail-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.4rem 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 18px -16px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(4px);
+  transition: box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.detail-toggle__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.detail-toggle__button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-toggle__track {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 999px;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  box-shadow: 0 0 0 1px #d1d5db;
+  transition: box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.detail-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #d1d5db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.detail-toggle__mode {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: capitalize;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.18s ease, color 0.18s ease;
+}
+
+.detail-toggle:hover {
+  border-color: rgba(17, 17, 17, 0.12);
+}
+
+.detail-toggle:hover .detail-toggle__track {
+  box-shadow: 0 0 0 1px var(--accent-pink);
+}
+
+.detail-toggle:hover .detail-toggle__thumb {
+  background: var(--accent-pink);
+  box-shadow: 0 3px 10px rgba(219, 52, 242, 0.2);
+}
+
+.detail-toggle:hover .detail-toggle__mode {
+  opacity: 1;
+  color: #1f2937;
 }

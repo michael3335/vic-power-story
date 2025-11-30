@@ -7,7 +7,13 @@ import FEVDTrendStrip from "./components/FEVDTrendStrip";
 import BillSensitivityTable from "./components/BillSensitivityTable";
 import SectionBreadcrumbs from "./components/SectionBreadcrumbs";
 import ScrollCue from "./components/ScrollCue";
-import type { RollingBetaPoint, FEVDFullRow, FEVDTrendPoint } from "@/types/results";
+import RenShareSeriesChartClient from "./components/RenShareSeriesChartClient";
+import { DetailModeProvider } from "./components/DetailModeContext";
+import RenShareNarrative from "./components/RenShareNarrative";
+import PassThroughNarrative from "./components/PassThroughNarrative";
+import FEVDNowNarrative from "./components/FEVDNowNarrative";
+import FEVDTrendNarrative from "./components/FEVDTrendNarrative";
+import type { RollingBetaPoint, FEVDFullRow, FEVDTrendPoint, RenSharePoint } from "@/types/results";
 
 const SECTION_BREADCRUMBS = [
   {
@@ -15,10 +21,11 @@ const SECTION_BREADCRUMBS = [
     label: "Introduction",
     aliases: ["about", "tldr"],
   },
-  { id: "exec", label: "Executive summary" },
+  /* { id: "exec", label: "Executive summary" },*/
   { id: "old-story", label: "Traditional Narrative" },
   { id: "contribution", label: "Contribution" },
   { id: "background", label: "Market Context" },
+  { id: "ren-share", label: "Renewables Share" },
   { id: "methods", label: "Methods" },
   {
     id: "phases",
@@ -41,12 +48,13 @@ async function getWebData() {
     }
   }
 
-  const [rollingBeta, fevdDemandFirstArr, fevdRenFirstArr, fevdTrend] =
+  const [rollingBeta, fevdDemandFirstArr, fevdRenFirstArr, fevdTrend, renShareSeries] =
     await Promise.all([
       safeRead<RollingBetaPoint[]>("rolling_beta.json"),
       safeRead<FEVDFullRow[]>("fevd_full_demand_first.json"),
       safeRead<FEVDFullRow[]>("fevd_full_ren_first.json"),
       safeRead<FEVDTrendPoint[]>("fevd_trend.json"),
+      safeRead<RenSharePoint[]>("ren_share_series.json"),
     ]);
 
   return {
@@ -54,19 +62,21 @@ async function getWebData() {
     fevdDemandFirst: fevdDemandFirstArr?.[0] ?? null,
     fevdRenFirst: fevdRenFirstArr?.[0] ?? null,
     fevdTrend: fevdTrend ?? [],
+    renShareSeries: renShareSeries ?? [],
   };
 }
 
 export default async function Home() {
-  const { rollingBeta, fevdDemandFirst, fevdRenFirst, fevdTrend } =
+  const { rollingBeta, fevdDemandFirst, fevdRenFirst, fevdTrend, renShareSeries } =
     await getWebData();
   const publishedDate = "30 Nov 2025";
 
   return (
-    <main style={{ scrollSnapType: "y mandatory" }}>
-      <SectionBreadcrumbs sections={SECTION_BREADCRUMBS} />
-      {/* HERO */}
-      <RevealSection sectionId="hero">
+    <DetailModeProvider>
+      <main style={{ scrollSnapType: "y mandatory" }}>
+        <SectionBreadcrumbs sections={SECTION_BREADCRUMBS} />
+        {/* HERO */}
+        <RevealSection sectionId="hero">
         <p
           style={{
             textTransform: "uppercase",
@@ -74,7 +84,7 @@ export default async function Home() {
             letterSpacing: "0.18em",
           }}
         >
-          Victoria · Wholesale Electricity · 2015–2025
+          Victorian Energy Market Dynamics • Explainer
         </p>
         <p
           style={{
@@ -84,7 +94,7 @@ export default async function Home() {
           }}
         >
           {publishedDate} |{" "}
-          <a href="mailto:contact@michaelharrison.au?subject=Re:%20%22Decoupling%20from%20gas%22" style={{ color: "inherit" }}>
+          <a href="mailto:contact@michaelharrison.au?subject=Re:%20Decoupling%20from%20gas" className="contact-link">
             Michael Harrison
           </a>
         </p>
@@ -126,10 +136,10 @@ export default async function Home() {
             Download report (PDF)
           </a>
         </div>
-        <ScrollCue />
-      </RevealSection>
+          <ScrollCue />
+        </RevealSection>
 
-      <RevealSection sectionId="about">
+        <RevealSection sectionId="about">
         <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>
           About this project
         </h2>
@@ -142,29 +152,67 @@ export default async function Home() {
               <dt className="w-24 text-neutral-500">Author</dt>
               <dd className="flex-1">
                 <a
-                  href="mailto:contact@michaelharrison.au"
+                  href="mailto:contact@michaelharrison.au?subject=Re:%20Decoupling%20from%20gas"
                   className="underline underline-offset-2"
                 >
                   Michael Harrison
                 </a>
               </dd>
             </div>
+
+            <div className="flex gap-2">
+              <dt className="w-24 text-neutral-500">Scope</dt>
+              <dd className="flex-1">Victoria only (NEM VIC region)</dd>
+            </div>
+
             <div className="flex gap-2">
               <dt className="w-24 text-neutral-500">Period</dt>
               <dd className="flex-1">Monthly data, 2015–2025</dd>
             </div>
+
             <div className="flex gap-2">
               <dt className="w-24 text-neutral-500">Data</dt>
               <dd className="flex-1">
-                <ul className="list-disc pl-4 space-y-0.5">
-                  <li>Victorian wholesale electricity prices</li>
-                  <li>Wallumbilla gas hub prices</li>
-                  <li>Renewables share of generation</li>
-                  <li>Interconnector imports and exports</li>
-                  <li>Demand, temperature and key global fuel benchmarks</li>
-                </ul>
+                <p>
+                  Monthly Victorian prices, gas, renewables, imports/exports, demand and
+                  weather, plus key global fuel benchmarks.
+                </p>
+                <p className="data-sources mt-1 text-xs text-neutral-500">
+                  <a
+                    href="https://explore.openelectricity.org.au/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open Electricity
+                  </a>{" "}
+                  ·{" "}
+                  <a
+                    href="https://www.aer.gov.au/industry/registers/charts/wallumbilla-gas-supply-hub-trade-volume-and-vwa-prices-pipeline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    AER
+                  </a>{" "}
+                  ·{" "}
+                  <a
+                    href="https://fred.stlouisfed.org/graph/?g=ko34"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    FRED
+                  </a>{" "}
+                  ·{" "}
+                  <a
+                    href="https://www.indexmundi.com/commodities/?commodity=coal-australian"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Index Mundi
+                  </a>
+                </p>
               </dd>
             </div>
+
             <div className="flex gap-2">
               <dt className="w-24 text-neutral-500">Methods</dt>
               <dd className="flex-1">
@@ -177,74 +225,10 @@ export default async function Home() {
             </div>
           </dl>
         </div>
-      </RevealSection>
+        </RevealSection>
 
-      <RevealSection sectionId="tldr">
-        <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>TL;DR</h2>
-        <div
-          className="mt-4 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700 shadow-sm"
-          style={{ maxWidth: "36rem" }}
-        >
-          <ul className="list-disc pl-4 space-y-1">
-            <li>Gas pass-through is now near zero or negative month-to-month.</li>
-            <li>Renewables, imports and demand explain ~80% of FEVD at 24 months.</li>
-            <li>“Other / own price” mostly covers direct electricity shocks plus own VAR noise.</li>
-          </ul>
-        </div>
-      </RevealSection>
-
-      {/* EXEC SUMMARY */}
-      <RevealSection sectionId="exec">
-        <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-          Executive summary: what changed?
-        </h2>
-        <p>
-          For most of the last decade, Victorian wholesale electricity prices
-          largely mirrored fossil fuel input costs, especially gas at the
-          margin. This work asks whether that link has structurally weakened as
-          renewables, storage and interconnection have grown.
-        </p>
-        <ul style={{ marginLeft: "1.2rem", paddingLeft: 0 }}>
-          <li>
-            Across structural break tests, rolling models and VAR/FEVD analysis,
-            we find a clear regime shift: gas has moved from the{" "}
-            <em>centre</em> of price formation towards the <em>periphery</em>.
-          </li>
-          <li>
-            In early years (2015–2019), gas shocks explain a meaningful share of
-            wholesale price variation; in the most recent data, at a two-year
-            (24‑month) horizon they explain only around <strong>2%</strong> of
-            price variance, while renewables explain <strong>~14–15%</strong>,
-            imports a few percent more, and &ldquo;other / own price&rdquo;
-            dynamics around <strong>four‑fifths</strong>.
-          </li>
-          <li>
-            Weather and extreme events matter on both the demand side
-            (heatwaves, cold snaps) and the supply side (wind and solar output,
-            outages and congestion). These drivers now shape bills more than
-            global gas, coal or oil shocks.
-          </li>
-          <li>
-            Econometrically, we see no stable long-run cointegrating
-            relationship tying electricity prices tightly to gas, renewables or
-            demand, and robust shifts in the gas → power pass-through around
-            2022–23.
-          </li>
-          <li>
-            The market has moved from a{" "}
-            <strong>fuel-cost regime</strong> (“what does gas cost?”) to a{" "}
-            <strong>scarcity and abundance regime</strong> (“how tight is the
-            system given weather, renewables and transmission?”).
-          </li>
-        </ul>
-        <p>
-          The sections below unpack this story for a general policy audience.
-          The working paper provides the full econometric detail for specialists.
-        </p>
-      </RevealSection>
-
-      {/* OLD STORY */}
-      <RevealSection sectionId="old-story">
+        {/* OLD STORY */}
+        <RevealSection sectionId="old-story">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           1. Traditional Narrative
         </h2>
@@ -340,10 +324,10 @@ export default async function Home() {
           and shows how, in a high-renewables, interconnected system, that
           gas–power link has fundamentally changed.
         </p>
-      </RevealSection>
+        </RevealSection>
 
-      {/* Contribution */}
-      <RevealSection sectionId="contribution">
+        {/* Contribution */}
+        <RevealSection sectionId="contribution">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           2. Contribution
         </h2>
@@ -370,13 +354,16 @@ export default async function Home() {
         <p>
           Taken together, the results suggest that while gas historically anchored
           prices across the NEM, in Victoria&apos;s recent high-renewables regime
-          <b> gas has moved from the centre to the periphery of monthly price
-            formation</b>.
+          wholesale prices have largely <b>decoupled from international fossil fuel
+            benchmarks</b>. Geopolitical risk transmitted via global oil and gas prices
+          has been replaced by <b>meteorological risk</b> — dunkelflaute and
+          heatwaves in a renewables-heavy system now sit at the centre of monthly
+          price formation, with gas moving to the periphery.
         </p>
-      </RevealSection>
+        </RevealSection>
 
-      {/* BACKGROUND */}
-      <RevealSection sectionId="background">
+        {/* BACKGROUND */}
+        <RevealSection sectionId="background">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
           3. Market Context
         </h2>
@@ -415,12 +402,31 @@ export default async function Home() {
           still anchors prices in this newer, high‑renewables, interconnected
           system.
         </p>
-      </RevealSection>
+        </RevealSection>
 
-      {/* METHODS */}
-      <RevealSection sectionId="methods">
+        {/* RENEWABLES SHARE */}
+        <RevealSection sectionId="ren-share">
+          <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
+            4. Renewables share over time
+          </h2>
+          <p>
+            Before we turn to the econometrics, it is useful to see how quickly
+            renewables have expanded in Victoria&apos;s mix. The chart below shows
+            the monthly share of generation from renewables since 2015.
+          </p>
+          <RenShareNarrative />
+          <div className="mt-4" style={{ maxWidth: "40rem" }}>
+            <RenShareSeriesChartClient
+              data={renShareSeries}
+              sectionId="ren-share"
+            />
+          </div>
+        </RevealSection>
+
+        {/* METHODS */}
+        <RevealSection sectionId="methods">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-          4. Methods
+          5. Methods
         </h2>
         <p>
           We assembled monthly data for Victoria from early 2015 to late 2025:
@@ -455,12 +461,12 @@ export default async function Home() {
           is that we ask the same question in several independent ways: how
           important is gas today, compared with renewables, imports and demand?
         </p>
-      </RevealSection>
+        </RevealSection>
 
-      {/* PHASES */}
-      <RevealSection sectionId="phases">
+        {/* PHASES */}
+        <RevealSection sectionId="phases">
         <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-          5. Regime Shifts
+          6. Regime Shifts
         </h2>
         <p>
           When we line up the data with the model results, Victoria’s last
@@ -524,144 +530,155 @@ export default async function Home() {
           explain only a small slice of remaining volatility – the gas–power
           link itself has weakened.
         </p>
-      </RevealSection>
+        </RevealSection>
 
-      {/* VISUAL: ROLLING BETA */}
-      <RevealSection sectionId="pass-through">
-        <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
-          5a. How the gas → power link weakened over time
-        </h2>
-        <p>
-          The chart below tracks how much changes in gas prices flow through to
-          power prices, month by month. Shaded bands line up with the three
-          phases above. When the line hugs zero (and the shaded confidence band
-          crosses zero), gas isn’t really moving electricity prices. Red dots
-          mark short periods where gas and power even move in opposite
-          directions. The quick read: gas clearly mattered in 2015–19, but in
-          2023–25 the typical pass-through is close to zero.
-        </p>
-        <div className="mt-4 full-bleed">
-          <div className="wide-inner">
-            <RollingBetaChartClient data={rollingBeta} />
+        {/* VISUAL: ROLLING BETA */}
+        <RevealSection sectionId="pass-through">
+          <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
+            6a. How the gas → power link weakened over time
+          </h2>
+          <p>
+            The chart below tracks how much changes in gas prices flow through to
+            power prices, month by month. Shaded bands line up with the three
+            phases above. When the line hugs zero (and the shaded confidence band
+            crosses zero), gas isn’t really moving electricity prices. Red dots
+            mark short periods where gas and power even move in opposite
+            directions. The quick read: gas clearly mattered in 2015–19, but in
+            2023–25 the typical pass-through is close to zero.
+          </p>
+          <PassThroughNarrative
+            phase1Avg={null}
+            phase2Avg={null}
+            phase3Avg={null}
+          />
+          <div className="mt-4 full-bleed">
+            <div className="wide-inner">
+              <RollingBetaChartClient
+                data={rollingBeta}
+                sectionId="pass-through"
+              />
+            </div>
           </div>
-        </div>
-      </RevealSection>
+        </RevealSection>
 
-      {/* VISUAL: FEVD NOW */}
-      <RevealSection sectionId="fevd-now">
-        <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
-          5b. What actually drives prices now?
-        </h2>
-        <p>
-          Over a two-year (24‑month) horizon in the most recent data, our FEVD
-          results show that gas shocks account for only a small slice of price
-          variation (around <strong>2%</strong>). Renewables explain roughly{" "}
-          <strong>14–15%</strong>, imports a few percent more, and{" "}
-          <span style={{ whiteSpace: "nowrap" }}>other / own price</span>{" "}
-          dynamics about <strong>four‑fifths</strong>. The stacked bars make
-          that plain: the big gray chunk is “other / own price”, the green slice
-          is renewables, and the tiny amber slice is gas.
-        </p>
-        <p>
-          Here “other / own price” mostly captures shocks that hit electricity
-          prices directly – bidding behaviour, outages, policy shifts and market
-          design – plus the mechanical “own-shock” component of the VAR.
-        </p>
-        <div className="mt-4 full-bleed">
-          <div className="wide-inner">
+        {/* VISUAL: FEVD NOW */}
+        <RevealSection sectionId="fevd-now">
+          <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
+            6b. What actually drives prices now?
+          </h2>
+          <p>
+            Over a two-year (24‑month) horizon in the most recent data, our FEVD
+            results show that gas shocks account for only a small slice of price
+            variation (around <strong>2%</strong>). Renewables explain roughly{" "}
+            <strong>14–15%</strong>, imports a few percent more, and{" "}
+            <span style={{ whiteSpace: "nowrap" }}>other / own price</span>{" "}
+            dynamics about <strong>four‑fifths</strong>. The stacked bars make
+            that plain: the big gray chunk is “other / own price”, the green slice
+            is renewables, and the tiny amber slice is gas.
+          </p>
+          <FEVDNowNarrative />
+          <p>
+            Here “other / own price” mostly captures shocks that hit electricity
+            prices directly – bidding behaviour, outages, policy shifts and market
+            design – plus the mechanical “own-shock” component of the VAR.
+          </p>
+          <div className="mt-4">
             <FEVDNowChartTableClient
               demandFirst={fevdDemandFirst}
               renFirst={fevdRenFirst}
+              sectionId="fevd-now"
             />
           </div>
-        </div>
-      </RevealSection>
+        </RevealSection>
 
-      {/* VISUAL: FEVD TREND OVER TIME */}
-      <RevealSection sectionId="fevd-trend">
-        <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
-          5c. How drivers’ importance shifted
-        </h2>
-        <p>
-          These panels show how each driver’s share of overall variance moves
-          over time, not just at the two-year horizon above. Monthly FEVD
-          shares for each driver show{" "}
-          <span style={{ whiteSpace: "nowrap" }}>other / own price</span>{" "}
-          dynamics dominating throughout, renewables rising over the decade, and
-          gas small in the latest period after a mid‑sample spike. The shaded
-          background bands align with the three phases above. Panels run in
-          story order (own-price → renewables → demand → imports → gas) and all
-          share a 0–100% scale so you can compare at a glance.
-        </p>
-        <div className="mt-4 full-bleed">
-          <div className="wide-inner">
-            <FEVDTrendStrip data={fevdTrend} />
+        {/* VISUAL: FEVD TREND OVER TIME */}
+        <RevealSection sectionId="fevd-trend">
+          <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
+            6c. How drivers’ importance shifted
+          </h2>
+          <p>
+            These panels show how each driver’s share of overall variance moves
+            over time, not just at the two-year horizon above. Monthly FEVD
+            shares for each driver show{" "}
+            <span style={{ whiteSpace: "nowrap" }}>other / own price</span>{" "}
+            dynamics dominating throughout, renewables rising over the decade, and
+            gas small in the latest period after a mid-sample spike. The shaded
+            background bands align with the three phases above. Panels run in
+            story order (own-price → renewables → demand → imports → gas) and all
+            share a 0–100% scale so you can compare at a glance.
+          </p>
+          <FEVDTrendNarrative />
+          <div className="mt-4">
+            <FEVDTrendStrip data={fevdTrend} sectionId="fevd-trend" />
           </div>
-        </div>
-      </RevealSection>
+        </RevealSection>
 
-      {/* BILLS */}
-      <RevealSection sectionId="bills">
-        <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-          6. Retail Impact
-        </h2>
-        <p>
-          For a household or small business, the core question is simple:
-        </p>
-        <p style={{ fontStyle: "italic", marginLeft: "1rem" }}>
-          “What am I actually exposed to now?”
-        </p>
-        <p>
-          Earlier in the decade, a significant share of the risk in your
-          electricity bill really was about gas. If international gas prices
-          spiked, there was a good chance your power bill would feel it.
-        </p>
-        <p>
-          Today, our analysis suggests that your bill is relatively less exposed
-          to gas price shocks and more exposed to:
-        </p>
-        <ul style={{ marginLeft: "1.2rem", paddingLeft: 0 }}>
-          <li>weather and temperature, which drive demand,</li>
-          <li>the availability of wind and solar, which shifts supply,</li>
-          <li>
-            and the health of transmission and interconnectors, which govern
-            imports and congestion.
-          </li>
-        </ul>
-        <p>
-          This doesn’t mean gas is irrelevant – during tight supply episodes gas-fired plant still often sets the marginal price – but on a month-by-month basis, weather, renewables and network conditions now explain much more of the ups and downs.
-        </p>
-        <BillSensitivityTable demandFirst={fevdDemandFirst} renFirst={fevdRenFirst} />
-      </RevealSection>
+        {/* BILLS */}
+        <RevealSection sectionId="bills">
+          <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
+            7. Retail Impact
+          </h2>
+          <p>
+            For a household or small business, the core question is simple:
+          </p>
+          <p style={{ fontStyle: "italic", marginLeft: "1rem" }}>
+            “What am I actually exposed to now?”
+          </p>
+          <p>
+            Earlier in the decade, a significant share of the risk in your
+            electricity bill really was about gas. If international gas prices
+            spiked, there was a good chance your power bill would feel it.
+          </p>
+          <p>
+            Today, our analysis suggests that your bill is relatively less exposed
+            to gas price shocks and more exposed to:
+          </p>
+          <ul style={{ marginLeft: "1.2rem", paddingLeft: 0 }}>
+            <li>weather and temperature, which drive demand,</li>
+            <li>the availability of wind and solar, which shifts supply,</li>
+            <li>
+              and the health of transmission and interconnectors, which govern
+              imports and congestion.
+            </li>
+          </ul>
+          <p>
+            This doesn’t mean gas is irrelevant – during tight supply episodes
+            gas-fired plant still often sets the marginal price – but on a
+            month-by-month basis, weather, renewables and network conditions now
+            explain much more of the ups and downs.
+          </p>
+          <BillSensitivityTable demandFirst={fevdDemandFirst} renFirst={fevdRenFirst} />
+        </RevealSection>
 
-      {/* POLICY */}
-      <RevealSection sectionId="policy">
-        <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-          7. Policy Implications
-        </h2>
-        <p>
-          This shift has real consequences for hedging and market design.
-          Hedging gas alone is no longer enough; weather, renewable generation
-          and congestion risk now matter more for wholesale prices. Market
-          participants increasingly need tools that manage{" "}
-          <strong>scarcity and abundance risk</strong> – contracts linked to
-          weather, flexible load, storage and interconnector availability, not
-          just fuel.
-        </p>
-        <p>
-          For policymakers, a weaker gas anchor means traditional fuel-cost
-          narratives will explain less and less of what happens to bills.
-          Pricing, reliability and transition policy need to account for a
-          system where renewables, storage and networks drive scarcity events.
-          Market signals should reward flexibility – storage, demand response
-          and transmission – as well as fuel.
-        </p>
-        <p style={{ marginTop: "1rem" }}>
-          The full working paper sets out the models and robustness checks in
-          detail, including unit root tests, break tests and variance
-          decompositions. This page is the accessible version of that story.
-        </p>
-      </RevealSection>
-    </main>
+        {/* POLICY */}
+        <RevealSection sectionId="policy">
+          <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
+            8. Policy Implications
+          </h2>
+          <p>
+            This shift has real consequences for hedging and market design.
+            Hedging gas alone is no longer enough; weather, renewable generation
+            and congestion risk now matter more for wholesale prices. Market
+            participants increasingly need tools that manage{" "}
+            <strong>scarcity and abundance risk</strong> – contracts linked to
+            weather, flexible load, storage and interconnector availability, not
+            just fuel.
+          </p>
+          <p>
+            For policymakers, a weaker gas anchor means traditional fuel-cost
+            narratives will explain less and less of what happens to bills.
+            Pricing, reliability and transition policy need to account for a
+            system where renewables, storage and networks drive scarcity events.
+            Market signals should reward flexibility – storage, demand response
+            and transmission – as well as fuel.
+          </p>
+          <p style={{ marginTop: "1rem" }}>
+            The full working paper sets out the models and robustness checks in
+            detail, including unit root tests, break tests and variance
+            decompositions. This page is the accessible version of that story.
+          </p>
+        </RevealSection>
+      </main>
+    </DetailModeProvider>
   );
 }
