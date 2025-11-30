@@ -573,20 +573,6 @@ export default async function Home() {
           <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
             4. Renewables share over time
           </h2>
-          <div className="detail-compact">
-            <ul className="list-disc pl-4 space-y-1 text-sm">
-              <li>Victoria now gets a much larger share of its power from wind and solar than it did a decade ago.</li>
-              <li>The chart shows how quickly that share has climbed since 2015.</li>
-              <li>This shift helps explain why prices now respond more to weather and renewable output.</li>
-            </ul>
-          </div>
-          <div className="detail-detailed">
-            <p>
-              Before we turn to the econometrics, it is useful to see how quickly
-              renewables have expanded in Victoria&apos;s mix. The chart below shows
-              the monthly share of generation from renewables since 2015.
-            </p>
-          </div>
           <RenShareNarrative />
           <div className="mt-4" style={{ maxWidth: "40rem" }}>
             <RenShareSeriesChartClient

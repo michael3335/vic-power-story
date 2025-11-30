@@ -8,15 +8,23 @@ export default function RenShareNarrative() {
 
     if (mode === "compact") {
         return (
-            <ul className="list-disc pl-4 space-y-1 text-sm">
-                <li>Renewable generation in Victoria climbs sharply over the decade.</li>
-                <li>That growth helps shift prices from fuel-led to more weather-led.</li>
-            </ul>
+            <>
+                <p>
+                    The chart below shows the monthly share of generation from renewables since 2015.
+                </p>
+                <ul className="list-disc pl-4 space-y-1 text-sm">
+                    <li>Victoria now gets a much larger share of its power from wind and solar than it did a decade ago.</li>
+                    <li>The shift suggests dependence on coal is likely to have decreased.</li>
+                </ul>
+            </>
         );
     }
 
     return (
         <>
+            <p>
+                The chart below shows the monthly share of generation from renewables since 2015.
+            </p>
             <p>
                 From 2015 to 2025, renewables&apos; share of generation rises from
                 roughly one-fifth to well over one-half. That structural change is one
