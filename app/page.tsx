@@ -206,8 +206,7 @@ export default async function Home() {
           >
             Using monthly data from 2015 to 2025 and standard tools from energy
             economics, we track how gas, renewables, imports and demand each
-            contribute to Victorian wholesale electricity prices, and how that
-            mix has changed over time.
+            contribute to Victorian wholesale electricity prices, and attempt to answer the question: <br /><br /><b>Does gas still anchor Victorian power prices, or has the system become weather / renewables-led?</b>
           </p>
 
           <div style={{ marginTop: "1.75rem" }}>
@@ -419,14 +418,48 @@ export default async function Home() {
           <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
             2. Contribution
           </h2>
+
+          {/* Compact – general audience */}
           <div className="detail-compact">
             <ul className="list-disc pl-4 space-y-1 text-sm">
-              <li>We zoom in on Victoria instead of treating the whole market as one story.</li>
-              <li>We include the recent years where renewables, storage and links between states matter more.</li>
-              <li>We ask how the balance of drivers has shifted over time, not just how they lined up in the past.</li>
-              <li>The headline: prices in Victoria now lean less on global fuel costs and more on local weather and renewables.</li>
+              <li>
+                We look just at <b>Victoria</b>, rather than treating the whole east
+                coast as one big market.
+              </li>
+              <li>
+                We include the recent years when <b>renewables, storage and
+                  interconnectors</b> really start to bite.
+              </li>
+              <li>
+                We test, in simple terms, whether Victoria still behaves like a{" "}
+                <b>gas-led</b> market or more like a <b>weather-led</b> one.
+              </li>
+              <li>
+                We show three simple facts:
+                <ul className="mt-1 list-disc pl-4 space-y-0.5">
+                  <li>
+                    earlier in the decade, gas price moves and power prices tended to
+                    move together; in recent years they mostly do not;
+                  </li>
+                  <li>
+                    when prices bounce around now, <b>renewables explain much more of
+                      that</b> than gas does;
+                  </li>
+                  <li>
+                    over the decade, renewables’ role in price swings has grown, while
+                    gas’s role has shrunk.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Put simply: Victoria has <b>decoupled from gas</b> — monthly prices now
+                lean far more on <b>weather, renewables and system conditions</b> than
+                on global gas prices.
+              </li>
             </ul>
           </div>
+
+          {/* Detailed – for people who care about methods */}
           <div className="detail-detailed">
             <p>
               This work builds on that standard gas–power story, but does three things
@@ -438,24 +471,47 @@ export default async function Home() {
                 than treating the mainland NEM as one homogeneous market.
               </li>
               <li>
-                <b>High-renewables period:</b> It extends the data through 2025, capturing
-                the post-2022 crisis years where renewables, storage and interconnectors
-                play a much larger role.
+                <b>High-renewables period:</b> It extends the data through 2025,
+                capturing the post-2022 crisis years where renewables, storage and
+                interconnectors play a much larger role.
               </li>
               <li>
                 <b>Time-series lens:</b> It uses cointegration tests, structural break
-                tests and VAR/FEVD analysis to look at regime shifts and variance shares,
-                not just simple correlations or average “heat rates”.
+                tests and VAR/FEVD analysis to look at regime shifts and variance
+                shares, not just simple correlations or average “heat rates”.
               </li>
             </ul>
-            <p>
-              Taken together, the results suggest that while gas historically anchored
+
+            <p className="mt-3">
+              Empirically, three findings drive the story:
+            </p>
+            <ul>
+              <li>
+                <b>Pass-through collapses:</b> rolling gas → power models show a clear
+                positive relationship in 2015–19 that falls to around zero (and
+                sometimes negative) in 2023–25.
+              </li>
+              <li>
+                <b>Renewables ≫ gas in variance shares:</b> in the latest data, gas
+                shocks explain only around <b>2%</b> of two-year price variance, while
+                renewables explain around <b>14–15%</b>, and this result is robust to
+                alternative VAR orderings.
+              </li>
+              <li>
+                <b>A decade-long shift:</b> FEVD trends over time show renewables’
+                contribution to price variation rising and gas’s contribution shrinking,
+                consistent with a structural move away from gas-anchored pricing.
+              </li>
+            </ul>
+
+            <p className="mt-3">
+              Taken together, these results suggest that while gas historically anchored
               prices across the NEM, in Victoria&apos;s recent high-renewables regime
               wholesale prices have largely <b>decoupled from international fossil fuel
-                benchmarks</b>. Geopolitical risk transmitted via global oil and gas prices
-              has been replaced by <b>meteorological risk</b> — dunkelflaute and
-              heatwaves in a renewables-heavy system now sit at the centre of monthly
-              price formation, with gas moving to the periphery.
+                benchmarks</b>. Geopolitical risk transmitted via global oil and gas
+              prices has been replaced by <b>meteorological and system risk</b> —
+              dunkelflaute, heatwaves and network conditions now sit at the centre of
+              monthly price formation, with gas moving to the periphery.
             </p>
           </div>
         </RevealSection>
