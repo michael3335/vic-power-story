@@ -248,12 +248,7 @@ export default function ModelReadyChartsClient({
                             />
                             <Tooltip
                                 cursor={{ fill: "#f3f4f6" }}
-                                content={
-                                    <CustomTooltip
-                                        unitLabel={series.unitLabel}
-                                        valueFormatter={series.valueFormatter}
-                                    />
-                                }
+                                content={<CustomTooltip valueFormatter={series.valueFormatter} />}
                             />
                             {series.key !== "ren_share" ? (
                                 <ReferenceLine

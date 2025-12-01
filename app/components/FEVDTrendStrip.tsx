@@ -275,9 +275,12 @@ export default function FEVDTrendStrip({ data, sectionId }: Props) {
         const label = state?.activeLabel;
         if (label === undefined || label === null) return;
 
-        const payloadPoint = state?.activePayload?.[0]?.payload as
-            | FEVDTrendPoint
-            | undefined;
+        const payloadPoint =
+            (state && "activePayload" in state
+                ? // recharts event typing omits activePayload; fall back to runtime check
+                  (state as unknown as { activePayload?: Array<{ payload?: unknown }> })
+                      .activePayload?.[0]?.payload
+                : undefined) as FEVDTrendPoint | undefined;
         const labelStr = String(label);
         const point =
             payloadPoint ??
