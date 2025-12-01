@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { CustomCursor } from "./components/CustomCursor";
 
 const faviconBase = "https://www.michaelharrison.au";
 
@@ -39,6 +40,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans bg-white text-black">
         {children}
+        <CustomCursor />
       </body>
     </html>
   );
