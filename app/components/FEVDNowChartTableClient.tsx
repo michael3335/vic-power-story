@@ -179,7 +179,8 @@ export default function FEVDNowChartTableClient({
     /** Row label above each bar, fully left (based on Gas segment's x) */
     const labelAboveBar: LabelContentType = (props: LabelProps) => {
         const { x, y, index } = props;
-        const row = chartData[index];
+        const rowIndex = typeof index === "number" ? index : -1;
+        const row = rowIndex >= 0 ? chartData[rowIndex] : undefined;
         if (!row) return null;
 
         const cx = toNumber(x) + 4; // slight padding from left edge of first segment
