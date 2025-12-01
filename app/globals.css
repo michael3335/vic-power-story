@@ -27,6 +27,10 @@
   );
 }
 
+.timeline-progress {
+  transform-origin: left center;
+}
+
 html,
 body {
   padding: 0;
@@ -288,7 +292,6 @@ p {
   border: none;
   background: transparent;
   padding: 0;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -451,7 +454,7 @@ p {
   transform: translate3d(-50%, -50%, 0) scale(1);
   transition: transform 140ms ease, opacity 180ms ease;
   opacity: 0;
-  z-index: 50;
+  z-index: 80;
   will-change: transform, opacity;
 }
 
@@ -468,6 +471,10 @@ p {
   a:active {
     cursor: none !important;
   }
+  .detail-toggle,
+  .detail-toggle * {
+    cursor: none !important;
+  }
 
   .custom-cursor {
     display: block;
@@ -477,5 +484,8 @@ p {
 @media (pointer: coarse) {
   .custom-cursor {
     display: none;
+  }
+  .detail-toggle__button {
+    cursor: pointer;
   }
 }

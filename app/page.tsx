@@ -15,6 +15,7 @@ import FEVDTrendNarrative from "./components/FEVDTrendNarrative";
 import MobileDisclaimerModal from "./components/MobileDisclaimerModal";
 import ModelReadyChartsClient from "./components/ModelReadyChartsClient";
 import RenShareSeriesChartClient from "./components/RenShareSeriesChartClient";
+import { Timeline } from "./components/Timeline";
 import type {
   RollingBetaPoint,
   FEVDFullRow,
@@ -36,6 +37,13 @@ type RollingPhaseDefinition = {
   end?: string;
   color: string;
   windowLabel: string;
+};
+
+type SystemTimelineEvent = {
+  id: string;
+  year: string;
+  label: string;
+  description: string;
 };
 
 type WebData = {
@@ -95,6 +103,37 @@ const ROLLING_PHASES: RollingPhaseDefinition[] = [
     start: "2023-01",
     color: "#16a34a",
     windowLabel: "21-month windows",
+  },
+];
+
+const SYSTEM_TIMELINE_EVENTS: SystemTimelineEvent[] = [
+  {
+    id: "hazelwood",
+    year: "2017",
+    label: "Hazelwood",
+    description:
+      "The Hazelwood brown coal station closes, tightening supply and lifting wholesale prices.",
+  },
+  {
+    id: "covid",
+    year: "2020",
+    label: "Covid-19",
+    description:
+      "The pandemic reshapes demand profiles and volatility as lockdowns and recovery play out.",
+  },
+  {
+    id: "fuel-shock",
+    year: "2022",
+    label: "Fuel shock",
+    description:
+      "Russia–Ukraine drives a global gas and coal crunch, sending fuel benchmarks sharply higher.",
+  },
+  {
+    id: "market-cap",
+    year: "Jun 2022",
+    label: "Market cap",
+    description:
+      "Price caps and a temporary NEM suspension break the usual fuel-linked price formation.",
   },
 ];
 
@@ -770,77 +809,7 @@ function SystemChangeSection({ modelReady }: SystemChangeSectionProps) {
         </h3>
         <div className="mt-4 full-bleed">
           <div className="wide-inner">
-            <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-900/90 px-4 py-5 text-slate-50 shadow-[0_22px_60px_-32px_rgba(15,23,42,1)] md:px-6 md:py-6">
-              <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-300">
-                    Victoria power market timeline
-                  </p>
-                  <p className="mt-1 text-sm text-slate-100/90">
-                    Four shocks that reshape how prices are set.
-                  </p>
-                </div>
-                <p className="text-xs font-medium text-slate-400">2017–2025</p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-4">
-                <div className="relative rounded-2xl border border-white/10 bg-white/5 px-3 py-4 shadow-sm md:px-4 md:py-5">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold text-slate-50">
-                      2017
-                    </span>
-                    <span className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
-                      Hazelwood
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-100/90 md:text-sm">
-                    The Hazelwood brown coal station closes, tightening supply and
-                    lifting wholesale prices.
-                  </p>
-                </div>
-                <div className="relative rounded-2xl border border-white/10 bg-white/5 px-3 py-4 shadow-sm md:px-4 md:py-5">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold text-slate-50">
-                      2020
-                    </span>
-                    <span className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
-                      Covid-19
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-100/90 md:text-sm">
-                    The pandemic reshapes demand profiles and volatility as lockdowns
-                    and recovery play out.
-                  </p>
-                </div>
-                <div className="relative rounded-2xl border border-white/10 bg-white/5 px-3 py-4 shadow-sm md:px-4 md:py-5">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold text-slate-50">
-                      2022
-                    </span>
-                    <span className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
-                      Fuel shock
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-100/90 md:text-sm">
-                    Russia–Ukraine drives a global gas and coal crunch, sending fuel
-                    benchmarks sharply higher.
-                  </p>
-                </div>
-                <div className="relative rounded-2xl border border-white/10 bg-white/5 px-3 py-4 shadow-sm md:px-4 md:py-5">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold text-slate-50">
-                      Jun 2022
-                    </span>
-                    <span className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
-                      Market cap
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-100/90 md:text-sm">
-                    Price caps and a temporary NEM suspension break the usual
-                    fuel-linked price formation.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Timeline events={SYSTEM_TIMELINE_EVENTS} />
           </div>
         </div>
       </RevealSection>

@@ -1,3 +1,4 @@
+// app/components/SectionBreadcrumbs.tsx
 "use client";
 
 import React from "react";
@@ -14,18 +15,27 @@ type Props = {
 };
 
 export default function SectionBreadcrumbs({ sections }: Props) {
-    const [activeId, setActiveId] = React.useState<string | null>(() => sections[0]?.id ?? null);
+    const [activeId, setActiveId] = React.useState<string | null>(
+        () => sections[0]?.id ?? null
+    );
     const [hoveredId, setHoveredId] = React.useState<string | null>(null);
     const [groupHovered, setGroupHovered] = React.useState(false);
+
     React.useEffect(() => {
         const handleActivate = (event: Event) => {
             const detail = (event as CustomEvent<string>).detail;
             setActiveId(detail);
         };
 
-        window.addEventListener(ACTIVE_SECTION_EVENT, handleActivate as EventListener);
+        window.addEventListener(
+            ACTIVE_SECTION_EVENT,
+            handleActivate as EventListener
+        );
         return () => {
-            window.removeEventListener(ACTIVE_SECTION_EVENT, handleActivate as EventListener);
+            window.removeEventListener(
+                ACTIVE_SECTION_EVENT,
+                handleActivate as EventListener
+            );
         };
     }, []);
 
@@ -74,7 +84,9 @@ export default function SectionBreadcrumbs({ sections }: Props) {
                 const baseOpacity = 0.5;
                 const activeOpacity = 0.9;
                 const targetOpacity = isActive ? activeOpacity : baseOpacity;
-                const hoveredOpacity = isHovered ? Math.min(1, targetOpacity + 0.1) : targetOpacity;
+                const hoveredOpacity = isHovered
+                    ? Math.min(1, targetOpacity + 0.1)
+                    : targetOpacity;
 
                 return (
                     <button
@@ -83,7 +95,9 @@ export default function SectionBreadcrumbs({ sections }: Props) {
                         onClick={() => handleClick(section.id)}
                         onMouseEnter={() => setHoveredId(section.id)}
                         onMouseLeave={() =>
-                            setHoveredId((prev) => (prev === section.id ? null : prev))
+                            setHoveredId((prev) =>
+                                prev === section.id ? null : prev
+                            )
                         }
                         aria-label={section.label}
                         style={{
