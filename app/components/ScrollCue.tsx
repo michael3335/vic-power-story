@@ -1,33 +1,34 @@
 "use client";
 
 import React from "react";
-
-const MIN_SCROLL = 30;
+import { ACTIVE_SECTION_EVENT } from "./RevealSection";
 
 export default function ScrollCue() {
-    const [atTop, setAtTop] = React.useState(true);
+    const [isHeroActive, setIsHeroActive] = React.useState(true);
 
     React.useEffect(() => {
-        if (typeof window === "undefined") return;
-
-        const handleScroll = () => {
-            const isTop = window.scrollY <= MIN_SCROLL;
-            setAtTop(isTop);
+        const handleActivate = (event: Event) => {
+            const detail = (event as CustomEvent<string>).detail;
+            setIsHeroActive(detail === "hero");
         };
 
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        handleScroll();
+        window.addEventListener(
+            ACTIVE_SECTION_EVENT,
+            handleActivate as EventListener
+        );
 
         return () => {
-            window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener(
+                ACTIVE_SECTION_EVENT,
+                handleActivate as EventListener
+            );
         };
     }, []);
 
+    const stateClass = isHeroActive ? "scroll-cue--visible" : "scroll-cue--hidden";
+
     return (
-        <div
-            className={`scroll-cue ${atTop ? "scroll-cue--visible" : "scroll-cue--hidden"}`}
-            aria-hidden="true"
-        >
+        <div className={`scroll-cue ${stateClass}`} aria-hidden="true">
             Scroll to explore ↓
         </div>
     );

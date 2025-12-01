@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 
 export const ACTIVE_SECTION_EVENT = "reveal-section:activate";
 let currentActiveId: string | null = null;
+let scrollTriggerRegistered = false;
 
 type Props = {
     children: React.ReactNode;
@@ -120,12 +121,17 @@ export default function RevealSection({
 
         let ctx: gsap.Context | null = null;
         let mounted = true;
+        const scrollerEl =
+            document.querySelector<HTMLElement>(".snap-container") ?? undefined;
 
         (async () => {
             const { ScrollTrigger } = await import("gsap/ScrollTrigger");
             if (!mounted || !ref.current) return;
 
-            gsap.registerPlugin(ScrollTrigger);
+            if (!scrollTriggerRegistered) {
+                gsap.registerPlugin(ScrollTrigger);
+                scrollTriggerRegistered = true;
+            }
 
             const el = ref.current;
 
@@ -155,33 +161,17 @@ export default function RevealSection({
                         duration: 0.6,
                         ease: "power2.out",
                         stagger: 0.06,
+                        immediateRender: false,
                         scrollTrigger: {
                             trigger: el,
                             start: "top 75%",
-                            toggleActions: "play none none reverse",
+                            scroller: scrollerEl,
+                            toggleActions: "play none none none",
+                            once: true,
                         },
                     });
                 }
 
-                // Slightly enhanced bullet-list reveals for lists inside the section
-                const lists = el.querySelectorAll<HTMLUListElement>("ul");
-                lists.forEach((list) => {
-                    const items = list.querySelectorAll("li");
-                    if (!items.length) return;
-
-                    gsap.from(items, {
-                        autoAlpha: 0,
-                        x: -10,
-                        duration: 0.4,
-                        ease: "power2.out",
-                        stagger: 0.04,
-                        scrollTrigger: {
-                            trigger: list,
-                            start: "top 80%",
-                            toggleActions: "play none none reverse",
-                        },
-                    });
-                });
             }, sectionEl);
         })();
 
