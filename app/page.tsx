@@ -202,8 +202,9 @@ export default async function Home() {
   return (
     <DetailModeProvider>
       <MobileDisclaimerModal />
-      <main style={{ scrollSnapType: "y mandatory" }}>
-        <SectionBreadcrumbs sections={SECTION_BREADCRUMBS} />
+      <div className="snap-container">
+        <main>
+          <SectionBreadcrumbs sections={SECTION_BREADCRUMBS} />
 
         <HeroSection publishedDate={PUBLISHED_DATE} />
 
@@ -255,7 +256,8 @@ export default async function Home() {
 
         {/* POLICY */}
         <PolicySection />
-      </main>
+        </main>
+      </div>
     </DetailModeProvider>
   );
 }

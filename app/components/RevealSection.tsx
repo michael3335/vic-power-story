@@ -82,7 +82,6 @@ export default function RevealSection({
             id={stableId}
             ref={ref}
             className={`section ${state} ${className}`}
-            style={{ scrollSnapAlign: "center" }}
         >
             <div className="section-inner">{children}</div>
         </section>
