@@ -1,6 +1,21 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { Space_Grotesk, Jost } from "next/font/google";
 import { CustomCursor } from "./components/CustomCursor";
+
+const jost = Jost({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
 
 const faviconBase = "https://www.michaelharrison.au";
 
@@ -29,15 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Space+Grotesk:wght@300..700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" className={`${jost.variable} ${spaceGrotesk.variable}`}>
       <body className="font-sans bg-white text-black">
         {children}
         <CustomCursor />
