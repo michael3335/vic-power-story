@@ -200,7 +200,7 @@ export default function FEVDNowChartTableClient({
         );
     };
 
-    const BarShape: React.FC<RectangleProps> = (props) => (
+    const BarShape = (props: RectangleProps) => (
         <Rectangle
             {...props}
             fill={props.fill}
