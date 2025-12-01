@@ -10,7 +10,7 @@ export default function RenShareNarrative() {
         return (
             <>
                 <p>
-                    The chart below shows the monthly share of generation from renewables since 2015.
+                    The charts below show monthly series since 2015, including the share of generation from renewables.
                 </p>
                 <ul className="list-disc pl-4 space-y-1 text-sm">
                     <li>Victoria now gets a much larger share of its power from wind and solar than it did a decade ago.</li>
@@ -23,7 +23,7 @@ export default function RenShareNarrative() {
     return (
         <>
             <p>
-                The chart below shows the monthly share of generation from renewables since 2015.
+                The charts below show monthly series since 2015, including the share of generation from renewables.
             </p>
             <p>
                 From 2015 to 2025, renewables&apos; share of generation rises from

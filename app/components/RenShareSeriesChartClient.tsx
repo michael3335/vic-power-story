@@ -40,13 +40,13 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
         }).format(parsedDate);
 
     return (
-        <div className="rounded-md border border-neutral-300 bg-white/95 px-3 py-2 text-xs text-black shadow-sm">
-            <div className="mb-1 font-semibold">{formattedDate}</div>
-            <div>
-                Renewables share of generation:{" "}
-                <span className="font-semibold">
-                    {(p.ren_share * 100).toFixed(1)}%
-                </span>
+        <div
+            className="rounded-md border border-neutral-300 px-5 py-4 text-xs text-black"
+            style={{ backgroundColor: "rgba(255,255,255,0.95)" }}
+        >
+            <div className="font-semibold text-neutral-900">{formattedDate}</div>
+            <div className="mt-1 font-semibold text-neutral-800">
+                {(p.ren_share * 100).toFixed(1)}%
             </div>
         </div>
     );

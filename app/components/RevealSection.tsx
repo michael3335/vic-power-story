@@ -19,7 +19,8 @@ export default function RevealSection({
     sectionId,
 }: Props) {
     const ref = useRef<HTMLDivElement | null>(null);
-    const idRef = useRef<string>(sectionId ?? React.useId());
+    const generatedId = React.useId();
+    const [stableId] = useState(() => sectionId ?? generatedId);
     const [state, setState] = useState<RevealState>("idle");
 
     useEffect(() => {
@@ -28,7 +29,7 @@ export default function RevealSection({
 
         const handleActivate = (event: Event) => {
             const detail = (event as CustomEvent<string>).detail;
-            if (detail === idRef.current) {
+            if (detail === stableId) {
                 setState("active");
             } else {
                 setState((prev) => (prev === "active" ? "exiting" : prev));
@@ -39,11 +40,11 @@ export default function RevealSection({
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
-                        if (currentActiveId !== idRef.current) {
-                            currentActiveId = idRef.current;
+                        if (currentActiveId !== stableId) {
+                            currentActiveId = stableId;
                             window.dispatchEvent(
                                 new CustomEvent<string>(ACTIVE_SECTION_EVENT, {
-                                    detail: idRef.current,
+                                    detail: stableId,
                                 })
                             );
                         }
@@ -60,15 +61,15 @@ export default function RevealSection({
         observer.observe(el);
 
         if (currentActiveId === null) {
-            currentActiveId = idRef.current;
-            window.dispatchEvent(new CustomEvent<string>(ACTIVE_SECTION_EVENT, { detail: idRef.current }));
+            currentActiveId = stableId;
+            window.dispatchEvent(new CustomEvent<string>(ACTIVE_SECTION_EVENT, { detail: stableId }));
         }
 
         return () => {
             window.removeEventListener(ACTIVE_SECTION_EVENT, handleActivate as EventListener);
             observer.disconnect();
         };
-    }, []);
+    }, [stableId]);
 
     useEffect(() => {
         if (state !== "exiting") return;
@@ -78,7 +79,7 @@ export default function RevealSection({
 
     return (
         <section
-            id={idRef.current}
+            id={stableId}
             ref={ref}
             className={`section ${state} ${className}`}
             style={{ scrollSnapAlign: "center" }}

@@ -12,6 +12,7 @@ import {
     LabelList,
     Rectangle,
 } from "recharts";
+import type { RectangleProps } from "recharts";
 import type {
     LabelContentType,
     Props as LabelProps,
@@ -26,8 +27,6 @@ type Props = {
 
 type FEVDStackKey = Exclude<keyof FEVDFullRow, "horizon">;
 
-const LABELS: FEVDStackKey[] = ["Gas", "Renewables", "Imports", "Demand", "Own"];
-
 const COLORS = {
     Gas: "#d97706", // amber-600
     Renewables: "#16a34a", // green-600
@@ -40,7 +39,10 @@ const colorFor = (key: FEVDStackKey) => COLORS[key];
 
 interface FEVDTooltipProps {
     active?: boolean;
-    payload?: any[];
+    payload?: Array<{
+        dataKey?: string | number;
+        value?: number;
+    }>;
     hoveredKey: FEVDStackKey | null;
 }
 
@@ -175,7 +177,7 @@ export default function FEVDNowChartTableClient({
     };
 
     /** Row label above each bar, fully left (based on Gas segment's x) */
-    const labelAboveBar: LabelContentType = (props: any) => {
+    const labelAboveBar: LabelContentType = (props: LabelProps) => {
         const { x, y, index } = props;
         const row = chartData[index];
         if (!row) return null;
@@ -197,19 +199,15 @@ export default function FEVDNowChartTableClient({
         );
     };
 
-    // Shared shape: same fill & opacity for normal + active (hovered) state
-    const makeShape =
-        (cursor: boolean) =>
-            (props: any): React.ReactElement =>
-            (
-                <Rectangle
-                    {...props}
-                    fill={props.fill}
-                    fillOpacity={1}
-                    stroke="none"
-                    style={cursor ? { cursor: "pointer" } : undefined}
-                />
-            );
+    const BarShape: React.FC<RectangleProps> = (props) => (
+        <Rectangle
+            {...props}
+            fill={props.fill}
+            fillOpacity={1}
+            stroke="none"
+            style={{ cursor: "pointer" }}
+        />
+    );
 
     return (
         <div className="space-y-4">
@@ -241,8 +239,8 @@ export default function FEVDNowChartTableClient({
                                 stackId="a"
                                 fill={COLORS.Gas}
                                 isAnimationActive={false}
-                                shape={makeShape(true)}
-                                activeBar={makeShape(true)}
+                                shape={BarShape}
+                                activeBar={BarShape}
                                 onMouseOver={() => setHoveredKey("Gas")}
                                 onMouseLeave={() => setHoveredKey(null)}
                             >
@@ -255,8 +253,8 @@ export default function FEVDNowChartTableClient({
                                 stackId="a"
                                 fill={COLORS.Renewables}
                                 isAnimationActive={false}
-                                shape={makeShape(true)}
-                                activeBar={makeShape(true)}
+                                shape={BarShape}
+                                activeBar={BarShape}
                                 onMouseOver={() => setHoveredKey("Renewables")}
                                 onMouseLeave={() => setHoveredKey(null)}
                             >
@@ -267,8 +265,8 @@ export default function FEVDNowChartTableClient({
                                 stackId="a"
                                 fill={COLORS.Imports}
                                 isAnimationActive={false}
-                                shape={makeShape(true)}
-                                activeBar={makeShape(true)}
+                                shape={BarShape}
+                                activeBar={BarShape}
                                 onMouseOver={() => setHoveredKey("Imports")}
                                 onMouseLeave={() => setHoveredKey(null)}
                             >
@@ -279,8 +277,8 @@ export default function FEVDNowChartTableClient({
                                 stackId="a"
                                 fill={COLORS.Demand}
                                 isAnimationActive={false}
-                                shape={makeShape(true)}
-                                activeBar={makeShape(true)}
+                                shape={BarShape}
+                                activeBar={BarShape}
                                 onMouseOver={() => setHoveredKey("Demand")}
                                 onMouseLeave={() => setHoveredKey(null)}
                             >
@@ -291,8 +289,8 @@ export default function FEVDNowChartTableClient({
                                 stackId="a"
                                 fill={COLORS.Own}
                                 isAnimationActive={false}
-                                shape={makeShape(true)}
-                                activeBar={makeShape(true)}
+                                shape={BarShape}
+                                activeBar={BarShape}
                                 onMouseOver={() => setHoveredKey("Own")}
                                 onMouseLeave={() => setHoveredKey(null)}
                             >

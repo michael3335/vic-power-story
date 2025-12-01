@@ -29,6 +29,13 @@ export type RenSharePoint = {
   ren_share: number; // share of generation in [0,1]
 };
 
+export type ModelReadyPoint = {
+  date: string; // "YYYY-MM-DD"
+  price: number; // electricity price (AUD/MWh, volume weighted)
+  gas: number; // gas price (AUD/GJ, volume weighted)
+  ren_share: number; // share of generation in [0,1]
+};
+
 // Events/markers to annotate the rolling beta chart
 export type ChartEvent =
   | {

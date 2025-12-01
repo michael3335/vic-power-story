@@ -34,15 +34,15 @@ All copy and data live inside the repository, making it straightforward to refre
 
 ## Stack
 
-| Category     | Details                                                                    |
-| ------------ | -------------------------------------------------------------------------- |
-| Framework    | Next.js 16 (App Router)                                                     |
-| Language     | TypeScript                                                                  |
-| UI           | React 19 with small custom components and vanilla CSS (see `app/globals.css`) |
-| Charts       | [Recharts](https://recharts.org/en-US)                                      |
-| Styling      | Global CSS + inline styles; `Space Grotesk` via `next/font/google`          |
+| Category     | Details                                                                        |
+| ------------ | ------------------------------------------------------------------------------ |
+| Framework    | Next.js 16 (App Router)                                                         |
+| Language     | TypeScript                                                                      |
+| UI           | React 19 with small custom components and vanilla CSS (see `app/globals.css`)   |
+| Charts       | [Recharts](https://recharts.org/en-US)                                          |
+| Styling      | Global CSS + inline styles; `Space Grotesk` via `next/font/google`              |
 
-Node.js 18.17+ (or 20+) is recommended to match the Next.js requirement.
+Runtime: Node.js 20.19.5 (see `.nvmrc` / `.node-version`), npm 10. Use `nvm use` in the repo root to align with the enforced engines.
 
 ---
 
@@ -69,10 +69,13 @@ vic-power-story/
 ## Getting Started
 
 ```bash
-# 1. Install dependencies
+# 1. Install Node 20 (respects .nvmrc / .node-version)
+nvm use
+
+# 2. Install dependencies
 npm install
 
-# 2. Launch the dev server
+# 3. Launch the dev server
 npm run dev
 # Visit http://localhost:3000
 ```
@@ -137,7 +140,7 @@ For static hosting, you can enable Next.js’ [Static Export](https://nextjs.org
 
 ## Troubleshooting & Notes
 
-- **Node version errors:** Ensure you are on Node 18.17+ (Next 16’s minimum). Use `nvm use 20` (or similar) if you see “Unsupported engine” messages.
+- **Node version errors:** Engines are pinned to Node 20.19.5 / npm 10. Run `nvm use` (or set your PATH to `/opt/homebrew/opt/node@20/bin`) before installing or running scripts.
 - **Missing data warnings:** Empty or malformed JSON files will lead to blank charts; check the console output from `safeRead` in `app/page.tsx`.
 - **Linting:** Run `npm run lint` to catch unused imports or type issues before committing.
 - **Assets:** All public images or favicons go in `public/`. Currently, only `favicon.ico` is present.
