@@ -50,22 +50,26 @@ type WebData = {
 const SECTION_BREADCRUMBS: SectionBreadcrumb[] = [
   {
     id: "hero",
-    label: "Introduction",
+    label: "Overview",
     aliases: ["about", "tldr"],
   },
+  { id: "background", label: "Background & Motivation" },
   { id: "old-story", label: "Conventional Belief" },
-  { id: "contribution", label: "Contribution" },
-  { id: "background", label: "Market Context" },
-  { id: "prices", label: "Prices" },
-  { id: "ren-share", label: "Renewables Share" },
-  { id: "methods", label: "Methods" },
+  { id: "contribution", label: "What’s Different Here" },
+  {
+    id: "system-change",
+    label: "How VIC Changed",
+    aliases: ["system-change-prices", "system-change-ren-share"],
+  },
+  { id: "methods", label: "Data & Methods" },
   {
     id: "phases",
-    label: "Regime Shifts",
+    label: "Evidence",
     aliases: ["pass-through", "fevd-now", "fevd-trend"],
   },
-  { id: "bills", label: "Retail Impact" },
-  { id: "policy", label: "Policy Implications" },
+  { id: "bills", label: "Impact on Households" },
+  { id: "policy", label: "Policy & Market" },
+  { id: "limitations", label: "Limitations" },
 ];
 
 const ROLLING_PHASES: RollingPhaseDefinition[] = [
@@ -206,56 +210,42 @@ export default async function Home() {
         <main>
           <SectionBreadcrumbs sections={SECTION_BREADCRUMBS} />
 
-        <HeroSection publishedDate={PUBLISHED_DATE} />
+          {/* 1. OVERVIEW */}
+          <HeroSection publishedDate={PUBLISHED_DATE} />
+          <AboutSection />
 
-        <AboutSection />
+          {/* 2. BACKGROUND AND MOTIVATION */}
+          <BackgroundSection />
+          <OldStorySection />
+          <ContributionSection />
+          <SystemChangeSection modelReady={data.modelReady} />
 
-        {/* OLD STORY */}
-        <OldStorySection />
+          {/* 3. DATA AND METHODS */}
+          <MethodsSection />
 
-        {/* Contribution */}
-        <ContributionSection />
+          {/* 4. EVIDENCE */}
+          <PhasesNarrativeSection />
+          <PassThroughSection
+            rollingBeta={data.rollingBeta}
+            rollingPhaseSummaries={rollingPhaseSummaries}
+            maxAbsRollingPhaseBeta={maxAbsRollingPhaseBeta}
+            phaseAverages={phaseAverages}
+          />
+          <FEVDNowSection
+            fevdDemandFirst={data.fevdDemandFirst}
+            fevdRenFirst={data.fevdRenFirst}
+          />
+          <FEVDTrendSection fevdTrend={data.fevdTrend} />
 
-        {/* BACKGROUND */}
-        <BackgroundSection />
+          {/* 5. IMPLICATION */}
+          <BillsSection
+            fevdDemandFirst={data.fevdDemandFirst}
+            fevdRenFirst={data.fevdRenFirst}
+          />
+          <PolicySection />
 
-        {/* PRICES */}
-        <PricesSection modelReady={data.modelReady} />
-
-        {/* RENEWABLES SHARE */}
-        <RenShareSection modelReady={data.modelReady} />
-
-        {/* METHODS */}
-        <MethodsSection />
-
-        {/* PHASES */}
-        <PhasesNarrativeSection />
-
-        {/* VISUAL: ROLLING BETA */}
-        <PassThroughSection
-          rollingBeta={data.rollingBeta}
-          rollingPhaseSummaries={rollingPhaseSummaries}
-          maxAbsRollingPhaseBeta={maxAbsRollingPhaseBeta}
-          phaseAverages={phaseAverages}
-        />
-
-        {/* VISUAL: FEVD NOW */}
-        <FEVDNowSection
-          fevdDemandFirst={data.fevdDemandFirst}
-          fevdRenFirst={data.fevdRenFirst}
-        />
-
-        {/* VISUAL: FEVD TREND OVER TIME */}
-        <FEVDTrendSection fevdTrend={data.fevdTrend} />
-
-        {/* BILLS */}
-        <BillsSection
-          fevdDemandFirst={data.fevdDemandFirst}
-          fevdRenFirst={data.fevdRenFirst}
-        />
-
-        {/* POLICY */}
-        <PolicySection />
+          {/* 6. LIMITATIONS */}
+          <LimitationsSection />
         </main>
       </div>
     </DetailModeProvider>
@@ -472,7 +462,7 @@ function OldStorySection() {
   return (
     <RevealSection sectionId="old-story">
       <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-        1. Conventional Belief
+        2.1 Conventional Belief
       </h2>
       <div className="detail-compact">
         <ul className="list-disc pl-4 space-y-1 text-sm">
@@ -590,7 +580,7 @@ function ContributionSection() {
   return (
     <RevealSection sectionId="contribution">
       <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-        2. Contribution
+        2.2 What this study does differently
       </h2>
 
       {/* Compact – general audience */}
@@ -697,7 +687,7 @@ function BackgroundSection() {
   return (
     <RevealSection sectionId="background">
       <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-        3. Market Context
+        2. Background and Motivation
       </h2>
       <div className="detail-compact">
         <ul className="list-disc pl-4 space-y-1 text-sm">
@@ -729,26 +719,10 @@ function BackgroundSection() {
         <p>
           Historically, brown coal supplied most Victorian energy, with gas
           often setting the marginal price. Several events reshaped this
-          picture:
+          picture, including coal closures, Covid-19, Russia&apos;s invasion of
+          Ukraine and the resulting global fuel crunch and domestic market
+          interventions.
         </p>
-        <ul style={{ marginLeft: "1.2rem", paddingLeft: 0 }}>
-          <li>
-            the closure of Hazelwood in 2017, which removed a large coal station
-            and tightened supply;
-          </li>
-          <li>
-            Covid-19 from 2020, which changed demand patterns and increased
-            volatility;
-          </li>
-          <li>
-            the 2022–23 global energy price shock and domestic interventions,
-            following Russia’s invasion of Ukraine;
-          </li>
-          <li>
-            a rapid build-out of wind, solar, rooftop PV and storage, alongside
-            stronger interconnection with other NEM regions.
-          </li>
-        </ul>
         <p>
           Our analysis sits on top of this institutional backdrop. We are not
           re-telling the standard merit-order story, but testing whether gas
@@ -760,77 +734,176 @@ function BackgroundSection() {
   );
 }
 
-type PricesSectionProps = {
+type SystemChangeSectionProps = {
   modelReady: ModelReadyPoint[];
 };
 
-type RenShareSectionProps = {
-  modelReady: ModelReadyPoint[];
-};
-
-function PricesSection({ modelReady }: PricesSectionProps) {
-  return (
-    <RevealSection sectionId="prices">
-      <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>4. Prices</h2>
-      <p className="text-sm text-neutral-700" style={{ maxWidth: "42rem" }}>
-        Monthly volume-weighted electricity prices (AUD/MWh) and gas prices
-        (AUD/GJ) loaded from <code>model_ready.json</code>.
-      </p>
-      <div className="mt-4" style={{ maxWidth: "40rem" }}>
-        <ModelReadyChartsClient
-          data={modelReady}
-          sectionId="prices"
-          includedKeys={["gas", "price"]}
-        />
-      </div>
-    </RevealSection>
-  );
-}
-
-function RenShareSection({ modelReady }: RenShareSectionProps) {
+function SystemChangeSection({ modelReady }: SystemChangeSectionProps) {
   const renOnly = modelReady.map(({ date, ren_share }) => ({
     date: date.slice(0, 7),
     ren_share,
   }));
 
   return (
-    <RevealSection sectionId="ren-share">
-      <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-        5. Renewables share over time
-      </h2>
-      <RenShareNarrative />
-      <div className="mt-4" style={{ maxWidth: "40rem" }}>
-        <RenShareSeriesChartClient data={renOnly} sectionId="ren-share" />
-      </div>
-    </RevealSection>
+    <>
+      <RevealSection sectionId="system-change">
+        <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
+          2.3 How Victoria&apos;s system has changed
+        </h2>
+        <div className="detail-compact">
+          <p className="text-sm text-neutral-700" style={{ maxWidth: "42rem" }}>
+            Scroll through the timeline and charts to see how coal exits, Covid-19
+            and the 2022 fuel shock line up with visible shifts in Victorian prices
+            and renewables.
+          </p>
+        </div>
+        <div className="detail-detailed">
+          <p className="text-sm text-neutral-700" style={{ maxWidth: "42rem" }}>
+            This section pulls together the major structural shocks to Victoria&apos;s
+            system – Hazelwood&apos;s closure, Covid-19, the Russia–Ukraine fuel shock
+            and the June 2022 market intervention – as a single visual timeline before
+            you look at prices and renewables in more detail.
+          </p>
+        </div>
+        <h3 style={{ marginTop: "1rem", fontSize: "1.1rem" }}>
+          2.3.1 Timeline of key events
+        </h3>
+        <div className="mt-4 full-bleed">
+          <div className="wide-inner">
+            <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-900/90 px-4 py-5 text-slate-50 shadow-[0_22px_60px_-32px_rgba(15,23,42,1)] md:px-6 md:py-6">
+              <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-300">
+                    Victoria power market timeline
+                  </p>
+                  <p className="mt-1 text-sm text-slate-100/90">
+                    Four shocks that reshape how prices are set.
+                  </p>
+                </div>
+                <p className="text-xs font-medium text-slate-400">2017–2025</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-4">
+                <div className="relative rounded-2xl border border-white/10 bg-white/5 px-3 py-4 shadow-sm md:px-4 md:py-5">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold text-slate-50">
+                      2017
+                    </span>
+                    <span className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
+                      Hazelwood
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-100/90 md:text-sm">
+                    The Hazelwood brown coal station closes, tightening supply and
+                    lifting wholesale prices.
+                  </p>
+                </div>
+                <div className="relative rounded-2xl border border-white/10 bg-white/5 px-3 py-4 shadow-sm md:px-4 md:py-5">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold text-slate-50">
+                      2020
+                    </span>
+                    <span className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
+                      Covid-19
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-100/90 md:text-sm">
+                    The pandemic reshapes demand profiles and volatility as lockdowns
+                    and recovery play out.
+                  </p>
+                </div>
+                <div className="relative rounded-2xl border border-white/10 bg-white/5 px-3 py-4 shadow-sm md:px-4 md:py-5">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold text-slate-50">
+                      2022
+                    </span>
+                    <span className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
+                      Fuel shock
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-100/90 md:text-sm">
+                    Russia–Ukraine drives a global gas and coal crunch, sending fuel
+                    benchmarks sharply higher.
+                  </p>
+                </div>
+                <div className="relative rounded-2xl border border-white/10 bg-white/5 px-3 py-4 shadow-sm md:px-4 md:py-5">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold text-slate-50">
+                      Jun 2022
+                    </span>
+                    <span className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-300">
+                      Market cap
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-100/90 md:text-sm">
+                    Price caps and a temporary NEM suspension break the usual
+                    fuel-linked price formation.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </RevealSection>
+
+      <RevealSection sectionId="system-change-prices">
+        <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
+          2.3.2 Price series
+        </h2>
+        <div className="detail-compact">
+          <p className="text-sm text-neutral-700" style={{ maxWidth: "42rem" }}>
+            Use this chart to see how Victorian wholesale prices and gas prices move
+            closely together early in the sample, then diverge around the global
+            fuel shock and market interventions.
+          </p>
+        </div>
+        <div className="detail-detailed">
+          <p className="text-sm text-neutral-700" style={{ maxWidth: "42rem" }}>
+            Early in the decade, gas and electricity prices track one another
+            closely. Around 2022–23, global fuel shocks and domestic interventions
+            break that tight link: wholesale prices fall back faster than gas,
+            consistent with a system that is less tightly anchored to fuel costs.
+          </p>
+        </div>
+        <div className="mt-4" style={{ maxWidth: "40rem" }}>
+          <ModelReadyChartsClient
+            data={modelReady}
+            sectionId="system-change-prices"
+            includedKeys={["gas", "price"]}
+          />
+        </div>
+      </RevealSection>
+
+      <RevealSection sectionId="system-change-ren-share">
+        <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
+          2.3.3 Renewables share
+        </h2>
+        <div className="mt-4" style={{ maxWidth: "40rem" }}>
+          <RenShareNarrative />
+          <RenShareSeriesChartClient
+            data={renOnly}
+            sectionId="system-change-ren-share"
+          />
+        </div>
+      </RevealSection>
+    </>
   );
 }
 
 function MethodsSection() {
   return (
     <RevealSection sectionId="methods">
-      <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>5. Methods</h2>
+      <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
+        3. Data and Methods
+      </h2>
       <div className="detail-compact">
-        <ul className="list-disc pl-4 space-y-1 text-sm">
-          <li>
-            We use monthly data on prices, gas, renewables, imports and demand
-            for Victoria from 2015 to 2025.
-          </li>
-          <li>
-            We look for long-run links, breaks in behaviour and how much each
-            driver explains price swings.
-          </li>
-          <li>
-            Across these checks, no single factor tightly pins prices down over
-            time.
-          </li>
-          <li>
-            That fading anchor is one reason gas plays a smaller central role
-            than it once did.
-          </li>
-        </ul>
+        <p className="text-sm text-neutral-700" style={{ maxWidth: "42rem" }}>
+          We bring together monthly data on Victorian prices, gas, renewables and
+          related drivers, and apply standard time-series tools to track breaks and
+          changing price dynamics over 2015–2025.
+        </p>
       </div>
       <div className="detail-detailed">
+        <h3 style={{ marginTop: "0.75rem", fontSize: "1.1rem" }}>3.1 Data</h3>
         <p>We assembled monthly data for Victoria from early 2015 to late 2025:</p>
         <ul style={{ marginLeft: "1.2rem", paddingLeft: 0 }}>
           <li>wholesale electricity prices,</li>
@@ -839,6 +912,8 @@ function MethodsSection() {
           <li>imports and exports between Victoria and other states,</li>
           <li>demand, temperature and key global fuel prices.</li>
         </ul>
+
+        <h3 style={{ marginTop: "1rem", fontSize: "1.1rem" }}>3.2 Methods</h3>
         <p>
           On top of this, we applied well-established econometric tools: unit
           root and cointegration tests, structural break tests, rolling models,
@@ -846,6 +921,8 @@ function MethodsSection() {
           decompositions (FEVDs), plus a standard spillover index to summarise
           cross-variable connectedness.
         </p>
+
+        <h3 style={{ marginTop: "1rem", fontSize: "1.1rem" }}>3.3 Breaks</h3>
         <p>
           These tests first ask whether any variable provides a stable long-run
           “anchor” for the others. In our data there is{" "}
@@ -857,8 +934,8 @@ function MethodsSection() {
           own. That is one early sign that the old gas anchor has weakened.
         </p>
         <p>
-          You don’t need the equations to follow the story. The important part is
-          that we ask the same question in several independent ways: how
+          You don&apos;t need the equations to follow the story. The important
+          part is that we ask the same question in several independent ways: how
           important is gas today, compared with renewables, imports and demand?
         </p>
       </div>
@@ -870,7 +947,7 @@ function PhasesNarrativeSection() {
   return (
     <RevealSection sectionId="phases">
       <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-        6. Regime Shifts
+        4. Evidence
       </h2>
       <div className="detail-compact">
         <ul className="list-disc pl-4 space-y-1 text-sm">
@@ -897,7 +974,7 @@ function PhasesNarrativeSection() {
         </p>
 
         <h3 style={{ marginTop: "1.25rem", fontSize: "1.2rem" }}>
-          Phase 1: Gas-anchored prices (roughly 2015–2019)
+          4.1 Gas-anchored prices (roughly 2015–2019)
         </h3>
         <p>
           In the early years of our sample, the old story holds. When gas prices
@@ -924,7 +1001,7 @@ function PhasesNarrativeSection() {
         </p>
 
         <h3 style={{ marginTop: "1.25rem", fontSize: "1.2rem" }}>
-          Phase 3: Weather and renewables in the driver’s seat (2023 onwards)
+          Phase 3: Weather and renewables in the driver&apos;s seat (2023 onwards)
         </h3>
         <p>
           By the most recent years, the picture has flipped. In our variance
@@ -971,7 +1048,7 @@ function PassThroughSection({
   return (
     <RevealSection sectionId="pass-through">
       <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
-        6a. How the gas → power link weakened over time
+        4.1 Gas pass-through weakens over time
       </h2>
       <p>
         The chart below tracks how much changes in gas prices flow through to
@@ -1064,7 +1141,7 @@ function FEVDNowSection({
   return (
     <RevealSection sectionId="fevd-now">
       <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
-        6b. What actually drives prices now?
+        4.2 Renewables now explain more of price variance than gas
       </h2>
       <p>
         Over a two-year (24-month) horizon in the most recent data, our FEVD
@@ -1101,7 +1178,7 @@ function FEVDTrendSection({ fevdTrend }: FEVDTrendSectionProps) {
   return (
     <RevealSection sectionId="fevd-trend">
       <h2 style={{ fontSize: "1.4rem", marginBottom: "0.75rem" }}>
-        6c. How drivers’ importance shifted
+        4.3 Shift in price drivers
       </h2>
       <p>
         These panels show how each driver’s share of overall variance moves over
@@ -1130,7 +1207,7 @@ function BillsSection({ fevdDemandFirst, fevdRenFirst }: BillsSectionProps) {
   return (
     <RevealSection sectionId="bills">
       <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-        7. Retail Impact
+        5.1 Impact on households
       </h2>
       <div className="detail-compact">
         <ul className="list-disc pl-4 space-y-1 text-sm">
@@ -1190,7 +1267,7 @@ function PolicySection() {
   return (
     <RevealSection sectionId="policy">
       <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>
-        8. Policy Implications
+        5.2 Policy and market implications
       </h2>
       <div className="detail-compact">
         <ul className="list-disc pl-4 space-y-1 text-sm">
@@ -1234,6 +1311,37 @@ function PolicySection() {
           The full working paper sets out the models and robustness checks in
           detail, including unit root tests, break tests and variance
           decompositions. This page is the accessible version of that story.
+        </p>
+      </div>
+    </RevealSection>
+  );
+}
+
+function LimitationsSection() {
+  return (
+    <RevealSection sectionId="limitations">
+      <h2 style={{ fontSize: "1.6rem", marginBottom: "0.75rem" }}>6. Limitations</h2>
+      <div className="detail-compact">
+        <ul className="list-disc pl-4 space-y-1 text-sm">
+          <li>We work with monthly data and cannot capture very short-lived price spikes.</li>
+          <li>The models focus on a limited set of drivers and leave out detailed bidding behaviour.</li>
+          <li>Results are specific to Victoria and the 2015–2025 period.</li>
+        </ul>
+      </div>
+      <div className="detail-detailed">
+        <p>
+          This analysis uses monthly data, so it smooths over five-minute and half-hour
+          price spikes that can matter for some market participants. Our models also
+          deliberately focus on a small set of key variables – prices, gas, renewables,
+          imports, demand and weather – rather than the full richness of bidding
+          strategies, contract positions or plant-level constraints.
+        </p>
+        <p>
+          The findings are specific to Victoria over 2015–2025 and rely on standard
+          time-series assumptions. Different modelling choices, higher-frequency data
+          or future structural changes in the market could shift the precise numbers,
+          even if the broad story about weakening gas pass-through and stronger
+          renewable influence remains.
         </p>
       </div>
     </RevealSection>
