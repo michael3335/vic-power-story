@@ -327,7 +327,8 @@ function HeroSection({ publishedDate }: HeroSectionProps) {
           >
             {publishedDate} ·{" "}
             <a
-              href="mailto:contact@michaelharrison.au?subject=Re:%20Decoupling%20from%20gas"
+              href="https://michaelharrison.au"
+              target="_blank"
               className="contact-link"
             >
               Michael Harrison
@@ -404,8 +405,9 @@ function AboutSection() {
             <dt className="w-24 text-neutral-500">Author</dt>
             <dd className="flex-1">
               <a
-                href="mailto:contact@michaelharrison.au?subject=Re:%20Decoupling%20from%20gas"
+                href="https://michaelharrison.au"
                 className="underline underline-offset-2"
+                target="_blank"
               >
                 Michael Harrison
               </a>
